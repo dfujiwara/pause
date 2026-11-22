@@ -145,13 +145,18 @@ private struct ResetScreen: View {
     }
 
     private func speakOpeningCueIfEnabled() {
-        guard UserDefaults.standard.bool(forKey: "speakOpeningCue"),
+        let preferences = UserDefaults.standard
+        guard preferences.bool(forKey: "speakOpeningCue"),
               !UIAccessibility.isVoiceOverRunning,
               let voice = openingCueVoice() else { return }
 
-        // Use the app's audio session so speech mixes and respects Silent Mode.
+        let audioSession = AVAudioSession.sharedInstance()
         do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient)
+            if preferences.bool(forKey: "speakInSilentMode") {
+                try audioSession.setCategory(.playback, mode: .default, options: .mixWithOthers)
+            } else {
+                try audioSession.setCategory(.ambient)
+            }
         } catch {
             return
         }

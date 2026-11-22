@@ -6,11 +6,27 @@
 	<array>
 		<dict>
 			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>FooterText</key>
+			<string>Speak in Silent Mode only applies when Speak Opening Cue is on. The cue may play through the iPhone speaker.</string>
+		</dict>
+		<dict>
+			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
 			<string>Speak Opening Cue</string>
 			<key>Key</key>
 			<string>speakOpeningCue</string>
+			<key>DefaultValue</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Speak in Silent Mode</string>
+			<key>Key</key>
+			<string>speakInSilentMode</string>
 			<key>DefaultValue</key>
 			<false/>
 		</dict>

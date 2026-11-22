@@ -2,7 +2,7 @@
 
 **Question:** Can you go from pocket to cue quickly enough to take one breath before you answer?
 
-The screen opens on “Let one breath out before you answer.” The three situations are optional; each tap shows a cue for you and a smaller line you can say out loud. Put the phone away whenever you’re ready. Leaving the app for the background resets the screen to the opening cue. Only the speech preference is saved; phrase rotation stays in memory, and nothing is sent.
+The screen opens on “Let one breath out before you answer.” The three situations are optional; each tap shows a cue for you and a smaller line you can say out loud. Put the phone away whenever you’re ready. Leaving the app for the background resets the screen to the opening cue. Only the speech preferences are saved; phrase rotation stays in memory, and nothing is sent.
 
 ## Run on your iPhone
 
@@ -26,16 +26,20 @@ Touch and hold the Lock Screen → **Customize** → **Lock Screen**. Remove one
 
 In **Settings → Accessibility → Read & Speak → Voices → English** (called **Spoken Content** on some iOS versions), preview and download a **Premium** or **Enhanced** voice. Reopen Pause. It automatically prefers installed Premium voices, then Enhanced voices, and still works offline with the standard voice if neither is installed.
 
+## Hear the opening cue in Silent Mode
+
+In **Settings → Apps → Pause**, turn on both **Speak Opening Cue** and **Speak in Silent Mode**. Both switches are off by default. The override only applies to Pause's opening cue and may play through your iPhone speaker.
+
 ## Check opening speech on your iPhone
 
 For a cold launch, swipe Pause away in the app switcher, then open it. Start with Silent Mode and VoiceOver off, and an audible volume on your usual audio route.
 
 1. On a fresh install, check **Settings → Apps → Pause → Speak Opening Cue** is off. Cold-launch Pause: it should be silent, and the opening pair and three situation buttons should be usable immediately.
 2. Turn the switch on and cold-launch. Listen for exactly one “Let one breath out before you answer.” The “Hang on. Give me a second.” line and situation cues should never be spoken by Pause. Cold-launch again and confirm the switch still has effect.
-3. Repeat the cold launch in airplane mode with Wi-Fi off; the cue should work without downloading a voice. Turn Silent Mode on and repeat: the screen should work without speech. Turn Silent Mode off and repeat with music already playing: the cue should use the current route without pausing or lowering the music.
+3. Repeat the cold launch in airplane mode with Wi-Fi off; the cue should work without downloading a voice. Turn Silent Mode on and repeat with **Speak in Silent Mode** off: the screen should work without speech. Turn **Speak in Silent Mode** on and repeat: the cue should play once. With the override still on, repeat with music already playing: the cue should use the current route without pausing or lowering the music.
 4. With the switch still on, enable VoiceOver and cold-launch. Only VoiceOver should speak; use it to select a situation and verify it announces both new lines. Turn VoiceOver off before the next check.
 5. In separate launches, lock the phone, leave for the Home Screen, or tap a situation as soon as the cue starts. Each action should stop the cue, with no resumption and no speech for the situation.
-6. Turn the switch off, then cold-launch twice. Both launches should be silent; confirm the switch stays off.
+6. Turn **Speak Opening Cue** off, leaving **Speak in Silent Mode** on, then cold-launch twice. Both launches should be silent. Turn the override off again after the check.
 
 ## Check reopening from your pocket on your iPhone
 
