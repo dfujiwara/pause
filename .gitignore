@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Xcode user settings and session state
+xcuserdata/
+*.xcuserstate
+
+# Build output
+DerivedData/
+build/
+*.xcarchive/
+*.ipa
+*.dSYM/
+*.dSYM.zip
+
+# Local Pi session data
+/.pi/
