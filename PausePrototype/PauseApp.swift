@@ -22,75 +22,34 @@ private struct ResetScreen: View {
     @State private var shouldAttemptOpeningSpeech = true
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Pause")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.secondary)
-
-                    Text(cue.inward)
-                        .font(.system(size: cueSize, weight: .semibold))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityAddTraits(.isHeader)
+        ViewThatFits(in: .vertical) {
+            VStack(spacing: 0) {
+                ScrollView {
+                    cueContent
+                        .padding(.vertical, 32)
                 }
+                .scrollPosition($scrollPosition)
+                // Reserve room for a readable viewport, regardless of cue length.
+                .frame(minHeight: 120, idealHeight: 120, maxHeight: .infinity)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("You can say")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                    Text("“\(cue.outLoud)”")
-                        .font(.title3)
-                }
-                .accessibilityElement(children: .combine)
-
-                Divider()
-
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("More cues (optional)")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                        .accessibilityAddTraits(.isHeader)
-
-                    ForEach(Situation.allCases) { option in
-                        Button {
-                            showCue(for: option)
-                        } label: {
-                            HStack {
-                                Text(option.rawValue)
-                                    .font(.body.weight(.semibold))
-                                    .multilineTextAlignment(.leading)
-                                Spacer(minLength: 12)
-                                if situation == option {
-                                    Image(systemName: "checkmark")
-                                        .accessibilityHidden(true)
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .frame(minHeight: 52)
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
-                        .overlay {
-                            if situation == option {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(.primary.opacity(0.45), lineWidth: 1)
-                                    .allowsHitTesting(false)
-                                    .accessibilityHidden(true)
-                            }
-                        }
-                        .accessibilityAddTraits(situation == option ? .isSelected : [])
-                    }
-                }
+                situationOptions
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.bottom, 24)
             }
-            .frame(maxWidth: 460, alignment: .leading)
-            .padding(.horizontal, 24)
-            .padding(.vertical, 32)
-            .frame(maxWidth: .infinity)
+
+            // On short screens or at very large text sizes, let everything scroll.
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    cueContent
+                    situationOptions
+                }
+                .padding(.vertical, 32)
+            }
+            .scrollPosition($scrollPosition)
         }
-        .scrollPosition($scrollPosition)
+        .frame(maxWidth: 460)
+        .padding(.horizontal, 24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onChange(of: scenePhase, initial: true) { _, phase in
             switch phase {
             case .active:
@@ -113,6 +72,74 @@ private struct ResetScreen: View {
         .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
             if UIAccessibility.isVoiceOverRunning {
                 stopOpeningSpeech()
+            }
+        }
+    }
+
+    private var cueContent: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Pause")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                Text(cue.inward)
+                    .font(.system(size: cueSize, weight: .semibold))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader)
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("You can say")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Text("“\(cue.outLoud)”")
+                    .font(.title3)
+            }
+            .accessibilityElement(children: .combine)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var situationOptions: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Divider()
+                .padding(.bottom, 6)
+
+            Text("More cues (optional)")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .accessibilityAddTraits(.isHeader)
+
+            ForEach(Situation.allCases) { option in
+                Button {
+                    showCue(for: option)
+                } label: {
+                    HStack {
+                        Text(option.rawValue)
+                            .font(.body.weight(.semibold))
+                            .multilineTextAlignment(.leading)
+                        Spacer(minLength: 12)
+                        Image(systemName: "checkmark")
+                            .opacity(situation == option ? 1 : 0)
+                            .accessibilityHidden(true)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .frame(minHeight: 52)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                .overlay {
+                    if situation == option {
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(.primary.opacity(0.45), lineWidth: 1)
+                            .allowsHitTesting(false)
+                            .accessibilityHidden(true)
+                    }
+                }
+                .accessibilityAddTraits(situation == option ? .isSelected : [])
             }
         }
     }
