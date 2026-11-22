@@ -1,3 +1,4 @@
+import AVFoundation
 import SwiftUI
 
 // Throwaway device prototype: can you get from pocket to pause before you answer?
@@ -17,6 +18,8 @@ private struct ResetScreen: View {
     @State private var cue = Cue.opening
     @State private var nextIndex: [Situation: Int] = [:]
     @State private var scrollPosition = ScrollPosition(edge: .top)
+    @State private var openingSpeech: AVSpeechSynthesizer?
+    @State private var openingActivationPending = true
 
     var body: some View {
         ScrollView {
@@ -88,16 +91,58 @@ private struct ResetScreen: View {
             .frame(maxWidth: .infinity)
         }
         .scrollPosition($scrollPosition)
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .background {
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            switch phase {
+            case .active:
+                guard openingActivationPending else { return }
+                openingActivationPending = false
+                speakOpeningCueIfEnabled()
+            case .inactive:
+                stopOpeningSpeech()
+            case .background:
+                stopOpeningSpeech()
+                // Only a background transition makes the next activation a new open.
+                openingActivationPending = true
                 situation = nil
                 cue = .opening
                 scrollPosition.scrollTo(edge: .top)
+            @unknown default:
+                stopOpeningSpeech()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
+            if UIAccessibility.isVoiceOverRunning {
+                stopOpeningSpeech()
             }
         }
     }
 
+    private func speakOpeningCueIfEnabled() {
+        guard UserDefaults.standard.bool(forKey: "speakOpeningCue"),
+              !UIAccessibility.isVoiceOverRunning,
+              let voice = AVSpeechSynthesisVoice(language: "en-US") else { return }
+
+        // Use the app's audio session so speech mixes and respects Silent Mode.
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient)
+        } catch {
+            return
+        }
+
+        let synthesizer = openingSpeech ?? AVSpeechSynthesizer()
+        openingSpeech = synthesizer
+        let utterance = AVSpeechUtterance(string: Cue.opening.inward)
+        utterance.voice = voice
+        synthesizer.speak(utterance)
+    }
+
+    private func stopOpeningSpeech() {
+        // Stop even if audio hasn't started; this also clears queued utterances.
+        openingSpeech?.stopSpeaking(at: .immediate)
+    }
+
     private func showCue(for option: Situation) {
+        stopOpeningSpeech()
         let cues = option.cues
         let index = nextIndex[option] ?? Int.random(in: cues.indices)
         let newCue = cues[index]

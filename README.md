@@ -33,4 +33,13 @@ For a cold launch, swipe Pause away in the app switcher, then open it. Start wit
 5. In separate launches, lock the phone, leave for the Home Screen, or tap a situation as soon as the cue starts. Each action should stop the cue, with no resumption and no speech for the situation.
 6. Turn the switch off, then cold-launch twice. Both launches should be silent; confirm the switch stays off.
 
-The verdict is whether it bought you a beat before answering, not whether you felt calm. No tracking needed.
+## Check reopening from your pocket on your iPhone
+
+The owner should run this on the physical iPhone with the Lock Screen control configured above. The simulator doesn't verify the actual pocket flow or iPhone audio behavior.
+
+1. Turn **Speak Opening Cue** on, with Silent Mode and VoiceOver off. Open Pause, lock the phone, and pocket it. Wake it, activate the Lock Screen control, and authenticate if needed. Listen for the inward opening cue once, then put the phone away without another glance. Was it quick enough to buy a beat?
+2. In Pause, select any situation, then lock the phone while that pair is showing. Reopen from the Lock Screen control: the opening pair should be at the top, no situation should be selected, and only the inward opening cue should play once.
+3. Repeat the reset by leaving for the Home Screen and reopening via the icon, then by leaving for another app and returning via the app switcher. Don't swipe Pause away. Each return should restore the opening pair and speak once. Try opening and dismissing Control Center while the cue is speaking without leaving Pause: the cue should stop, not resume or replay. Locking or leaving during speech should also cut off the old cue; a new open should start a fresh cue, not continue the old one. Tapping a situation should cut off the cue without starting any new speech.
+4. Repeat a reopen in airplane mode, with Silent Mode on, with other audio playing, and with VoiceOver on, one condition at a time. Expect the same behavior as on cold launch. Finally, turn **Speak Opening Cue** off and return to Pause without force-quitting; the opening pair should be silent.
+
+After a few real uses, decide whether hearing the cue bought a beat before answering without another glance. If access took too long, fix that before tuning speech. No tracking needed.
