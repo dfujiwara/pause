@@ -19,7 +19,7 @@ private struct ResetScreen: View {
     @State private var nextIndex: [Situation: Int] = [:]
     @State private var scrollPosition = ScrollPosition(edge: .top)
     @State private var openingSpeech: AVSpeechSynthesizer?
-    @State private var openingActivationPending = true
+    @State private var shouldAttemptOpeningSpeech = true
 
     var body: some View {
         ScrollView {
@@ -94,15 +94,15 @@ private struct ResetScreen: View {
         .onChange(of: scenePhase, initial: true) { _, phase in
             switch phase {
             case .active:
-                guard openingActivationPending else { return }
-                openingActivationPending = false
+                guard shouldAttemptOpeningSpeech else { return }
+                shouldAttemptOpeningSpeech = false
                 speakOpeningCueIfEnabled()
             case .inactive:
                 stopOpeningSpeech()
             case .background:
                 stopOpeningSpeech()
                 // Only a background transition makes the next activation a new open.
-                openingActivationPending = true
+                shouldAttemptOpeningSpeech = true
                 situation = nil
                 cue = .opening
                 scrollPosition.scrollTo(edge: .top)
@@ -120,7 +120,11 @@ private struct ResetScreen: View {
     private func speakOpeningCueIfEnabled() {
         guard UserDefaults.standard.bool(forKey: "speakOpeningCue"),
               !UIAccessibility.isVoiceOverRunning,
-              let voice = AVSpeechSynthesisVoice(language: "en-US") else { return }
+              let voice = AVSpeechSynthesisVoice(language: "en-US")
+                ?? AVSpeechSynthesisVoice.speechVoices().first(where: {
+                    Locale.Language(identifier: $0.language).languageCode?.identifier == "en"
+                        && !$0.voiceTraits.contains(.isPersonalVoice)
+                }) else { return }
 
         // Use the app's audio session so speech mixes and respects Silent Mode.
         do {
