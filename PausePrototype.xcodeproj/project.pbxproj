@@ -6,7 +6,7 @@
 	objects = {
 		AA0000000000000000000001 = {isa = PBXProject; buildConfigurationList = AA000000000000000000000B; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; knownRegions = (en, Base); mainGroup = AA0000000000000000000002; productRefGroup = AA0000000000000000000004; projectDirPath = ""; projectRoot = ""; targets = (AA0000000000000000000007); };
 		AA0000000000000000000002 = {isa = PBXGroup; children = (AA0000000000000000000003, AA0000000000000000000004); sourceTree = "<group>"; };
-		AA0000000000000000000003 = {isa = PBXGroup; children = (AA0000000000000000000005, AA0000000000000000000011); path = PausePrototype; sourceTree = "<group>"; };
+		AA0000000000000000000003 = {isa = PBXGroup; children = (AA0000000000000000000005, AA0000000000000000000011, AA0000000000000000000014); path = PausePrototype; sourceTree = "<group>"; };
 		AA0000000000000000000004 = {isa = PBXGroup; children = (AA0000000000000000000006); name = Products; sourceTree = "<group>"; };
 		AA0000000000000000000005 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseApp.swift; sourceTree = "<group>"; };
 		AA0000000000000000000006 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pause.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -18,6 +18,7 @@
 		AA000000000000000000000D = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 18.0; SDKROOT = iphoneos; }; name = Release; };
 		AA000000000000000000000E = {isa = XCConfigurationList; buildConfigurations = (AA000000000000000000000F, AA0000000000000000000010); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
 		AA000000000000000000000F = {isa = XCBuildConfiguration; buildSettings = {
+			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 			CODE_SIGN_STYLE = Automatic;
 			CURRENT_PROJECT_VERSION = 1;
 			GENERATE_INFOPLIST_FILE = YES;
@@ -31,6 +32,7 @@
 			TARGETED_DEVICE_FAMILY = 1;
 		}; name = Debug; };
 		AA0000000000000000000010 = {isa = XCBuildConfiguration; buildSettings = {
+			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 			CODE_SIGN_STYLE = Automatic;
 			CURRENT_PROJECT_VERSION = 1;
 			GENERATE_INFOPLIST_FILE = YES;
@@ -44,7 +46,9 @@
 		}; name = Release; };
 		AA0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = wrapper.plug-in; path = Settings.bundle; sourceTree = "<group>"; };
 		AA0000000000000000000012 = {isa = PBXBuildFile; fileRef = AA0000000000000000000011; };
-		AA0000000000000000000013 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (AA0000000000000000000012); runOnlyForDeploymentPostprocessing = 0; };
+		AA0000000000000000000013 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (AA0000000000000000000012, AA0000000000000000000015); runOnlyForDeploymentPostprocessing = 0; };
+		AA0000000000000000000014 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA0000000000000000000015 = {isa = PBXBuildFile; fileRef = AA0000000000000000000014; };
 	};
 	rootObject = AA0000000000000000000001;
 }
