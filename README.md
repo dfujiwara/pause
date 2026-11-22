@@ -22,6 +22,10 @@ Touch and hold the Lock Screen → **Customize** → **Lock Screen**. Remove one
 - Open it again, tap the situation you recognize most, and try the new line. Tap the same situation again to see another. Is reading the second line worth an extra tap?
 - Lock the phone while showing a situation, then use the shortcut again. Does it go straight to the opening cue?
 
+## Try a more natural voice
+
+In **Settings → Accessibility → Read & Speak → Voices → English** (called **Spoken Content** on some iOS versions), preview and download a **Premium** or **Enhanced** voice. Reopen Pause. It automatically prefers installed Premium voices, then Enhanced voices, and still works offline with the standard voice if neither is installed.
+
 ## Check opening speech on your iPhone
 
 For a cold launch, swipe Pause away in the app switcher, then open it. Start with Silent Mode and VoiceOver off, and an audible volume on your usual audio route.

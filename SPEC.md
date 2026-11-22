@@ -37,7 +37,7 @@ Pause is a private, single-screen iPhone app I can open from a Lock Screen contr
 - Start at the opening cue on cold launch and after the app returns from the background. Clear the selected situation and restore the top of the screen. Rotation can continue in memory while the app process is alive; no persistence is required across launches.
 - Put a default-off **Speak Opening Cue** switch in **Settings → Apps → Pause** and document it. Keep setup off the reset screen. Store only this preference locally; don't save cue selections, playback events, or usage history.
 - When enabled, speak only “Let one breath out before you answer.” once on a cold launch and once on the first activation after returning from the background, regardless of entry path. Don't replay after an inactive-only interruption. Don't speak the out-loud line or situation cues. Cut off ongoing speech when Pause becomes inactive (including when the phone locks or the user leaves) or when the user selects a situation. Don't resume a cut-off cue.
-- Use Apple’s on-device speech synthesis with an available English system voice. Don't require a download or a connection. Use the normal audio route (the speaker is allowed), respect Silent Mode, and mix without pausing or lowering other audio. If speech is unavailable, keep showing the cue without delay.
+- Use Apple’s on-device speech synthesis with an available English system voice. Prefer installed Premium voices, then Enhanced voices, then the standard system voice. Prefer US English within each quality tier. Don't require a download or a connection. Use the normal audio route (the speaker is allowed), respect Silent Mode, and mix without pausing or lowering other audio. If speech is unavailable, keep showing the cue without delay.
 - Keep all content and selection on-device. No service, network API, app sign-in, or analytics. AI-assisted drafting of the bundled copy is fine; the app itself makes no requests to generate cue text.
 - Support Dynamic Type and VoiceOver using native text and buttons. The inward cue is the primary heading; use the existing accessibility announcement for both updated lines after a situation tap. Skip app-controlled speech while VoiceOver is running so the voices don't compete.
 
@@ -55,7 +55,7 @@ Pause is a private, single-screen iPhone app I can open from a Lock Screen contr
 - Repairing things after snapping, general parenting advice, guided meditation, timed breathing, or a routine to complete.
 - Journaling, reminders, scores, streaks, accounts, syncing, and analytics.
 - Custom phrase editing, free-text situation entry, runtime AI (including on-device AI), and sending details about the kids off-device.
-- Voice selection, voice downloads, and recorded audio.
+- An in-app voice picker, in-app voice downloads, and recorded audio.
 - Additional Lock Screen integrations or public distribution. Try the app on the owner’s phone first.
 
 ## Further Notes

@@ -147,11 +147,7 @@ private struct ResetScreen: View {
     private func speakOpeningCueIfEnabled() {
         guard UserDefaults.standard.bool(forKey: "speakOpeningCue"),
               !UIAccessibility.isVoiceOverRunning,
-              let voice = AVSpeechSynthesisVoice(language: "en-US")
-                ?? AVSpeechSynthesisVoice.speechVoices().first(where: {
-                    Locale.Language(identifier: $0.language).languageCode?.identifier == "en"
-                        && !$0.voiceTraits.contains(.isPersonalVoice)
-                }) else { return }
+              let voice = openingCueVoice() else { return }
 
         // Use the app's audio session so speech mixes and respects Silent Mode.
         do {
@@ -165,6 +161,26 @@ private struct ResetScreen: View {
         let utterance = AVSpeechUtterance(string: Cue.opening.inward)
         utterance.voice = voice
         synthesizer.speak(utterance)
+    }
+
+    private func openingCueVoice() -> AVSpeechSynthesisVoice? {
+        let englishVoices = AVSpeechSynthesisVoice.speechVoices().filter {
+            Locale.Language(identifier: $0.language).languageCode?.identifier == "en"
+                && !$0.voiceTraits.contains(.isPersonalVoice)
+        }
+
+        for quality in [AVSpeechSynthesisVoiceQuality.premium, .enhanced] {
+            let voices = englishVoices.filter { $0.quality == quality }
+            if let voice = voices.first(where: { $0.language == "en-US" }) ?? voices.first {
+                return voice
+            }
+        }
+
+        if let voice = AVSpeechSynthesisVoice(language: "en-US"),
+           !voice.voiceTraits.contains(.isPersonalVoice) {
+            return voice
+        }
+        return englishVoices.first
     }
 
     private func stopOpeningSpeech() {
