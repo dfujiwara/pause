@@ -1,54 +1,196 @@
 // !$*UTF8*$!
 {
 	archiveVersion = 1;
-	classes = {};
+	classes = {
+	};
 	objectVersion = 56;
 	objects = {
-		AA0000000000000000000001 = {isa = PBXProject; buildConfigurationList = AA000000000000000000000B; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; knownRegions = (en, Base); mainGroup = AA0000000000000000000002; productRefGroup = AA0000000000000000000004; projectDirPath = ""; projectRoot = ""; targets = (AA0000000000000000000007); };
-		AA0000000000000000000002 = {isa = PBXGroup; children = (AA0000000000000000000003, AA0000000000000000000004); sourceTree = "<group>"; };
-		AA0000000000000000000003 = {isa = PBXGroup; children = (AA0000000000000000000005, AA0000000000000000000011, AA0000000000000000000014); path = PausePrototype; sourceTree = "<group>"; };
-		AA0000000000000000000004 = {isa = PBXGroup; children = (AA0000000000000000000006); name = Products; sourceTree = "<group>"; };
-		AA0000000000000000000005 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseApp.swift; sourceTree = "<group>"; };
-		AA0000000000000000000006 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pause.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA0000000000000000000007 = {isa = PBXNativeTarget; buildConfigurationList = AA000000000000000000000E; buildPhases = (AA0000000000000000000008, AA0000000000000000000013); buildRules = (); dependencies = (); name = Pause; productName = Pause; productReference = AA0000000000000000000006; productType = "com.apple.product-type.application"; };
-		AA0000000000000000000008 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (AA0000000000000000000009); runOnlyForDeploymentPostprocessing = 0; };
-		AA0000000000000000000009 = {isa = PBXBuildFile; fileRef = AA0000000000000000000005; };
-		AA000000000000000000000B = {isa = XCConfigurationList; buildConfigurations = (AA000000000000000000000C, AA000000000000000000000D); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
-		AA000000000000000000000C = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 18.0; SDKROOT = iphoneos; }; name = Debug; };
-		AA000000000000000000000D = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 18.0; SDKROOT = iphoneos; }; name = Release; };
-		AA000000000000000000000E = {isa = XCConfigurationList; buildConfigurations = (AA000000000000000000000F, AA0000000000000000000010); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
-		AA000000000000000000000F = {isa = XCBuildConfiguration; buildSettings = {
-			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-			CODE_SIGN_STYLE = Automatic;
-			CURRENT_PROJECT_VERSION = 1;
-			GENERATE_INFOPLIST_FILE = YES;
-			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-			INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-			MARKETING_VERSION = 0.1;
-			PRODUCT_BUNDLE_IDENTIFIER = com.example.pauseprototype;
-			PRODUCT_NAME = "$(TARGET_NAME)";
-			SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-			SWIFT_VERSION = 5.0;
-			TARGETED_DEVICE_FAMILY = 1;
-		}; name = Debug; };
-		AA0000000000000000000010 = {isa = XCBuildConfiguration; buildSettings = {
-			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-			CODE_SIGN_STYLE = Automatic;
-			CURRENT_PROJECT_VERSION = 1;
-			GENERATE_INFOPLIST_FILE = YES;
-			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-			INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-			MARKETING_VERSION = 0.1;
-			PRODUCT_BUNDLE_IDENTIFIER = com.example.pauseprototype;
-			PRODUCT_NAME = "$(TARGET_NAME)";
-			SWIFT_VERSION = 5.0;
-			TARGETED_DEVICE_FAMILY = 1;
-		}; name = Release; };
-		AA0000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = wrapper.plug-in; path = Settings.bundle; sourceTree = "<group>"; };
-		AA0000000000000000000012 = {isa = PBXBuildFile; fileRef = AA0000000000000000000011; };
-		AA0000000000000000000013 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (AA0000000000000000000012, AA0000000000000000000015); runOnlyForDeploymentPostprocessing = 0; };
-		AA0000000000000000000014 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AA0000000000000000000015 = {isa = PBXBuildFile; fileRef = AA0000000000000000000014; };
+
+/* Begin PBXBuildFile section */
+		AA0000000000000000000009 /* PauseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000005 /* PauseApp.swift */; };
+		AA0000000000000000000012 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000011 /* Settings.bundle */; };
+		AA0000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000014 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA0000000000000000000005 /* PauseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseApp.swift; sourceTree = "<group>"; };
+		AA0000000000000000000006 /* Pause.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pause.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0000000000000000000011 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		AA0000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		AA0000000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000003 /* PausePrototype */,
+				AA0000000000000000000004 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000003 /* PausePrototype */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000005 /* PauseApp.swift */,
+				AA0000000000000000000011 /* Settings.bundle */,
+				AA0000000000000000000014 /* Assets.xcassets */,
+			);
+			path = PausePrototype;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000006 /* Pause.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA0000000000000000000007 /* Pause */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA000000000000000000000E /* Build configuration list for PBXNativeTarget "Pause" */;
+			buildPhases = (
+				AA0000000000000000000008 /* Sources */,
+				AA0000000000000000000013 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Pause;
+			productName = Pause;
+			productReference = AA0000000000000000000006 /* Pause.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA0000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+			};
+			buildConfigurationList = AA000000000000000000000B /* Build configuration list for PBXProject "PausePrototype" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA0000000000000000000002;
+			productRefGroup = AA0000000000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA0000000000000000000007 /* Pause */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA0000000000000000000013 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000000000000000000012 /* Settings.bundle in Resources */,
+				AA0000000000000000000015 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA0000000000000000000008 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000000000000000000009 /* PauseApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA000000000000000000000C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		AA000000000000000000000D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		AA000000000000000000000F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z72VG6DPMS;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.pauseprototype;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AA0000000000000000000010 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z72VG6DPMS;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.pauseprototype;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA000000000000000000000B /* Build configuration list for PBXProject "PausePrototype" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000000000000000000000C /* Debug */,
+				AA000000000000000000000D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AA000000000000000000000E /* Build configuration list for PBXNativeTarget "Pause" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000000000000000000000F /* Debug */,
+				AA0000000000000000000010 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
 	};
-	rootObject = AA0000000000000000000001;
+	rootObject = AA0000000000000000000001 /* Project object */;
 }
