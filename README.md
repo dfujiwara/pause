@@ -7,7 +7,7 @@ The screen opens on “Let one breath out before you answer.” The three situat
 ## Run on your iPhone
 
 1. Open `PausePrototype.xcodeproj` in Xcode. If Xcode asks you to review its license or finish setup, do that first.
-2. Connect and unlock an iPhone running iOS 18 or later. Select the **Pause** target, then in **Signing & Capabilities** choose your team (a Personal Team is fine). Change the bundle identifier if Xcode says it’s unavailable.
+2. Connect and unlock an iPhone running iOS 26 or later. Select the **Pause** target, then in **Signing & Capabilities** choose your team (a Personal Team is fine). Change the bundle identifier if Xcode says it’s unavailable.
 3. Select your iPhone as the run destination and press **Run**. If prompted, enable Developer Mode on the iPhone.
 
 ## Put it on the Lock Screen
@@ -21,6 +21,12 @@ Touch and hold the Lock Screen → **Customize** → **Lock Screen**. Remove one
 - Lock the phone and put it in your pocket. Wake it, activate the control, read the opening line, and put it away. Did you need more effort or time than you’d realistically have?
 - Open it again, tap the situation you recognize most, and try the new line. Tap the same situation again to see another. Is reading the second line worth an extra tap?
 - Lock the phone while showing a situation, then use the shortcut again. Does it go straight to the opening cue?
+
+## Check the general suggestion
+
+1. Open Pause and check that the opening cue and all three situation buttons are still available.
+2. Tap **Ask how they’re feeling**. For now, Pause shows a labeled **General suggestion** without asking aloud, requesting microphone permission, or listening.
+3. Tap **Back to reset** to dismiss it. Open the suggestion again, leave for the Home Screen or lock the phone, then reopen Pause. It should show the opening cue, not the suggestion.
 
 ## Try a more natural voice
 

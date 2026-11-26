@@ -20,8 +20,47 @@ private struct ResetScreen: View {
     @State private var scrollPosition = ScrollPosition(edge: .top)
     @State private var openingSpeech: AVSpeechSynthesizer?
     @State private var shouldAttemptOpeningSpeech = true
+    @State private var showsGeneralSuggestion = false
 
     var body: some View {
+        Group {
+            if showsGeneralSuggestion {
+                generalSuggestion
+            } else {
+                resetContent
+            }
+        }
+        .frame(maxWidth: 460)
+        .padding(.horizontal, 24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            switch phase {
+            case .active:
+                guard shouldAttemptOpeningSpeech else { return }
+                shouldAttemptOpeningSpeech = false
+                speakOpeningCueIfEnabled()
+            case .inactive:
+                stopOpeningSpeech()
+            case .background:
+                stopOpeningSpeech()
+                // Only a background transition makes the next activation a new open.
+                shouldAttemptOpeningSpeech = true
+                showsGeneralSuggestion = false
+                situation = nil
+                cue = .opening
+                scrollPosition.scrollTo(edge: .top)
+            @unknown default:
+                stopOpeningSpeech()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
+            if UIAccessibility.isVoiceOverRunning {
+                stopOpeningSpeech()
+            }
+        }
+    }
+
+    private var resetContent: some View {
         ViewThatFits(in: .vertical) {
             VStack(spacing: 0) {
                 ScrollView {
@@ -47,32 +86,25 @@ private struct ResetScreen: View {
             }
             .scrollPosition($scrollPosition)
         }
-        .frame(maxWidth: 460)
-        .padding(.horizontal, 24)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onChange(of: scenePhase, initial: true) { _, phase in
-            switch phase {
-            case .active:
-                guard shouldAttemptOpeningSpeech else { return }
-                shouldAttemptOpeningSpeech = false
-                speakOpeningCueIfEnabled()
-            case .inactive:
-                stopOpeningSpeech()
-            case .background:
-                stopOpeningSpeech()
-                // Only a background transition makes the next activation a new open.
-                shouldAttemptOpeningSpeech = true
-                situation = nil
-                cue = .opening
-                scrollPosition.scrollTo(edge: .top)
-            @unknown default:
-                stopOpeningSpeech()
+    }
+
+    private var generalSuggestion: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("General suggestion")
+                    .font(.headline)
+                    .accessibilityAddTraits(.isHeader)
+                Text("Voice exchange isn’t available. This line isn’t based on your child’s answer.")
+                    .foregroundStyle(.secondary)
+                Text("“I’m here. You can tell me when you’re ready.”")
+                    .font(.title2)
+                Button("Back to reset") {
+                    showsGeneralSuggestion = false
+                }
+                .buttonStyle(.bordered)
             }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
-            if UIAccessibility.isVoiceOverRunning {
-                stopOpeningSpeech()
-            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 32)
         }
     }
 
@@ -97,6 +129,18 @@ private struct ResetScreen: View {
                     .font(.title3)
             }
             .accessibilityElement(children: .combine)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Button("Ask how they’re feeling") {
+                    stopOpeningSpeech()
+                    showsGeneralSuggestion = true
+                }
+                .buttonStyle(.bordered)
+                .accessibilityHint("Asks aloud, then listens when voice exchange is available.")
+                Text("Asks aloud, then listens")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
