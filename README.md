@@ -22,15 +22,16 @@ Touch and hold the Lock Screen → **Customize** → **Lock Screen**. Remove one
 - Open it again, tap the situation you recognize most, and try the new line. Tap the same situation again to see another. Is reading the second line worth an extra tap?
 - Lock the phone while showing a situation, then use the shortcut again. Does it go straight to the opening cue?
 
-## Check the spoken question and listening on your iPhone
+## Check the child exchange on your iPhone
 
-Use a supported iPhone with Apple Intelligence enabled and its model and the US English on-device Speech assets already installed. Pause does not download assets during an exchange. Use an adult tester for this walkthrough.
+Use a supported iPhone with Apple Intelligence enabled and its model and the US English on-device Speech assets already installed. Pause does not download assets during an exchange. Use an adult tester for this walkthrough. After granting microphone access, turn on airplane mode and turn Wi-Fi off to check the complete exchange offline.
 
 1. Turn off opening speech, turn on Silent Mode, and open Pause. It should show the usual opening cue and three situation buttons without asking anything or accessing the mic.
 2. Tap **Ask how they’re feeling** and allow microphone access if prompted. Listen for **“How are you feeling?”** even in Silent Mode. Check that **Listening…** and the system microphone indicator appear only after the question finishes.
-3. Speak, pause, then speak again. Check that **Hearing speech** indicates speech without showing a transcript and that pausing doesn't end the exchange. Tap **Done**; the mic should stop and the labeled **General suggestion** should appear. The suggestion is not yet personalized. Try again without tapping **Done**; the mic should stop after 30 seconds.
-4. Repeat with **Cancel**, locking the phone, and leaving for the Home Screen while the question is playing or the mic is active. Playback or recording should stop. Reopen Pause and check the exchange has been cleared.
-5. Deny microphone access in Settings and repeat; the labeled suggestion should explain that microphone access was denied without asking or listening. Repeat with Apple Intelligence unavailable, VoiceOver running, or the US English speech-to-text model missing; check that the explanation identifies the blocker. **Back to reset**, leaving, or locking should clear the suggestion and its explanation.
+3. Say “I wanted another turn,” pausing mid-answer. **Hearing speech** should indicate speech without showing a transcript or ending the exchange during the pause. Tap **Done**. The mic should stop before the reply appears. Check that one short, silent line acknowledges what you said without guessing why you said it or telling you what to do. It should stay on screen with the mic off. Tap **Back to reset** and check the line is gone.
+4. Try a different answer, such as “I miss my friend,” and let listening reach 30 seconds without tapping **Done**. Check that the mic stops and the reply reflects the new answer. On another attempt, say nothing and tap **Done**. Check that **General suggestion** appears instead of a personalized line.
+5. In separate attempts, go to the Home Screen or lock the phone while **Finding a reply…** is visible. Reopen and wait a few seconds; neither a reply nor a fallback should appear. Repeat after a reply is already visible. Also check leaving or locking while the question is playing or the mic is active. Playback or recording should stop, and reopening should start at reset. **Cancel** should also clear an in-progress exchange.
+6. Deny microphone access in Settings and repeat; the labeled suggestion should explain that microphone access was denied without asking or listening. Repeat with Apple Intelligence unavailable, VoiceOver running, or the US English speech-to-text model missing; check that the explanation identifies the blocker.
 
 ## Check speech model setup
 

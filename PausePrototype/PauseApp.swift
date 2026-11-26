@@ -25,9 +25,11 @@ private struct ResetScreen: View {
     var body: some View {
         Group {
             switch childExchange.phase {
-            case .reset: resetContent
+            case .reply(let line) where scenePhase == .active:
+                exchangeResult(title: "You can say", line: line) {}
+            case .reset, .reply: resetContent
             case .suggestion(let blocker): generalSuggestion(blocker: blocker)
-            case .preparing, .asking, .listening, .finishing: childExchangeStatus
+            case .preparing, .asking, .listening, .finishing, .generating: childExchangeStatus
             }
         }
         .frame(maxWidth: 460)
@@ -124,26 +126,45 @@ private struct ResetScreen: View {
         case .asking: ChildExchange.questionText
         case .listening: "Listening…"
         case .finishing: "Finishing…"
-        case .reset, .preparing, .suggestion: "Getting ready…"
+        case .generating: "Finding a reply…"
+        case .reset, .preparing, .suggestion, .reply: "Getting ready…"
         }
     }
 
     private func generalSuggestion(blocker: ChildExchange.Blocker?) -> some View {
+        exchangeResult(
+            title: "General suggestion",
+            line: "I’m here. You can tell me when you’re ready.",
+            note: "This line isn’t based on your child’s answer."
+        ) {
+            if blocker == .missingSpeechModel {
+                speechModelSetup
+            } else if let blocker {
+                Text(exchangeBlockerMessage(blocker))
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private func exchangeResult<Details: View>(
+        title: LocalizedStringKey,
+        line: String,
+        note: LocalizedStringKey? = nil,
+        @ViewBuilder details: () -> Details
+    ) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text("General suggestion")
+                Text(title)
                     .font(.headline)
                     .accessibilityAddTraits(.isHeader)
-                Text("This line isn’t based on your child’s answer.")
-                    .foregroundStyle(.secondary)
-                Text("“I’m here. You can tell me when you’re ready.”")
-                    .font(.title2)
-                if blocker == .missingSpeechModel {
-                    speechModelSetup
-                } else if let blocker {
-                    Text(exchangeBlockerMessage(blocker))
+                if let note {
+                    Text(note)
                         .foregroundStyle(.secondary)
                 }
+                Text("“\(line)”")
+                    .font(.title2)
+                    .privacySensitive()
+                details()
                 Button("Back to reset", action: childExchange.cancel)
                     .buttonStyle(.bordered)
             }
