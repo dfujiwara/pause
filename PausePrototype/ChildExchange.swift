@@ -276,7 +276,7 @@ private enum ChildReply {
 
     private static func selectDetail(from transcript: String) async throws -> String? {
         #if DEBUG && targetEnvironment(simulator)
-        if let fixture = ReplyFixture.current { return await fixture.selectDetail(from: transcript) }
+        if let fixture = ReplyFixture.current { return await fixture.selectDetail() }
         #endif
         let model = SystemLanguageModel.default
         guard model.isAvailable else { return nil }
@@ -317,8 +317,7 @@ private enum ReplyFixture: String {
         }
     }
 
-    func selectDetail(from transcript: String) async -> String? {
-        guard transcript == self.transcript else { return nil }
+    func selectDetail() async -> String {
         if self == .lateReply {
             // A runtime can return a result after its caller has been cancelled.
             _ = await Task { try? await Task.sleep(for: .seconds(8)) }.value

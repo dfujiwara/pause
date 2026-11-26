@@ -29,7 +29,11 @@ private struct ResetScreen: View {
                 exchangeResult(title: "You can say", line: line) {}
             case .reset, .reply: resetContent
             case .suggestion(let blocker): generalSuggestion(blocker: blocker)
-            case .preparing, .asking, .listening, .finishing, .generating: childExchangeStatus
+            case .preparing: childExchangeStatus(title: "Getting ready…")
+            case .asking: childExchangeStatus(title: ChildExchange.questionText)
+            case .listening: childExchangeStatus(title: "Listening…")
+            case .finishing: childExchangeStatus(title: "Finishing…")
+            case .generating: childExchangeStatus(title: "Finding a reply…")
             }
         }
         .frame(maxWidth: 460)
@@ -100,10 +104,10 @@ private struct ResetScreen: View {
         }
     }
 
-    private var childExchangeStatus: some View {
+    private func childExchangeStatus(title: String) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text(childExchangeStatusTitle)
+                Text(title)
                     .font(.title2)
                     .accessibilityAddTraits(.isHeader)
                 if childExchange.phase == .listening {
@@ -118,16 +122,6 @@ private struct ResetScreen: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 32)
-        }
-    }
-
-    private var childExchangeStatusTitle: String {
-        switch childExchange.phase {
-        case .asking: ChildExchange.questionText
-        case .listening: "Listening…"
-        case .finishing: "Finishing…"
-        case .generating: "Finding a reply…"
-        case .reset, .preparing, .suggestion, .reply: "Getting ready…"
         }
     }
 
