@@ -20,14 +20,14 @@ private struct ResetScreen: View {
     @State private var scrollPosition = ScrollPosition(edge: .top)
     @State private var openingSpeech: AVSpeechSynthesizer?
     @State private var shouldAttemptOpeningSpeech = true
-    @State private var showsGeneralSuggestion = false
+    @State private var childExchange = ChildExchange()
 
     var body: some View {
         Group {
-            if showsGeneralSuggestion {
-                generalSuggestion
-            } else {
-                resetContent
+            switch childExchange.phase {
+            case .reset: resetContent
+            case .suggestion: generalSuggestion
+            case .preparing, .asking, .listening, .finishing: childExchangeStatus
             }
         }
         .frame(maxWidth: 460)
@@ -36,26 +36,36 @@ private struct ResetScreen: View {
         .onChange(of: scenePhase, initial: true) { _, phase in
             switch phase {
             case .active:
+                childExchange.sceneDidActivate()
                 guard shouldAttemptOpeningSpeech else { return }
                 shouldAttemptOpeningSpeech = false
                 speakOpeningCueIfEnabled()
             case .inactive:
                 stopOpeningSpeech()
+                childExchange.sceneDidBecomeInactive()
             case .background:
                 stopOpeningSpeech()
                 // Only a background transition makes the next activation a new open.
                 shouldAttemptOpeningSpeech = true
-                showsGeneralSuggestion = false
+                childExchange.sceneDidBecomeInactive()
+                childExchange.cancel()
                 situation = nil
                 cue = .opening
                 scrollPosition.scrollTo(edge: .top)
             @unknown default:
                 stopOpeningSpeech()
+                childExchange.cancel()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { notification in
+            if notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt == AVAudioSession.InterruptionType.began.rawValue {
+                childExchange.interruptAudio()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
             if UIAccessibility.isVoiceOverRunning {
                 stopOpeningSpeech()
+                childExchange.interruptAudio()
             }
         }
     }
@@ -88,19 +98,47 @@ private struct ResetScreen: View {
         }
     }
 
+    private var childExchangeStatus: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(childExchangeStatusTitle)
+                    .font(.title2)
+                    .accessibilityAddTraits(.isHeader)
+                if childExchange.phase == .listening {
+                    Label("Hearing speech", systemImage: "waveform")
+                        .opacity(childExchange.hearsSpeech ? 1 : 0)
+                        .accessibilityHidden(!childExchange.hearsSpeech)
+                    Button("Done", action: childExchange.finishListening)
+                        .buttonStyle(.borderedProminent)
+                }
+                Button("Cancel", action: childExchange.cancel)
+                    .buttonStyle(.bordered)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 32)
+        }
+    }
+
+    private var childExchangeStatusTitle: String {
+        switch childExchange.phase {
+        case .asking: ChildExchange.questionText
+        case .listening: "Listening…"
+        case .finishing: "Finishing…"
+        case .reset, .preparing, .suggestion: "Getting ready…"
+        }
+    }
+
     private var generalSuggestion: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text("General suggestion")
                     .font(.headline)
                     .accessibilityAddTraits(.isHeader)
-                Text("Voice exchange isn’t available. This line isn’t based on your child’s answer.")
+                Text("This line isn’t based on your child’s answer.")
                     .foregroundStyle(.secondary)
                 Text("“I’m here. You can tell me when you’re ready.”")
                     .font(.title2)
-                Button("Back to reset") {
-                    showsGeneralSuggestion = false
-                }
+                Button("Back to reset", action: childExchange.cancel)
                 .buttonStyle(.bordered)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -133,7 +171,7 @@ private struct ResetScreen: View {
             VStack(alignment: .leading, spacing: 4) {
                 Button("Ask how they’re feeling") {
                     stopOpeningSpeech()
-                    showsGeneralSuggestion = true
+                    childExchange.start()
                 }
                 .buttonStyle(.bordered)
                 .accessibilityHint("Asks aloud, then listens when voice exchange is available.")

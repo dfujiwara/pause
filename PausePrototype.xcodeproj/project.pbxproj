@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA0000000000000000000017 /* ChildExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000016 /* ChildExchange.swift */; };
 		AA0000000000000000000009 /* PauseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000005 /* PauseApp.swift */; };
 		AA0000000000000000000012 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000011 /* Settings.bundle */; };
 		AA0000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000014 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AA0000000000000000000016 /* ChildExchange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildExchange.swift; sourceTree = "<group>"; };
 		AA0000000000000000000005 /* PauseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseApp.swift; sourceTree = "<group>"; };
 		AA0000000000000000000006 /* Pause.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pause.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0000000000000000000011 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -32,6 +34,7 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000005 /* PauseApp.swift */,
+				AA0000000000000000000016 /* ChildExchange.swift */,
 				AA0000000000000000000011 /* Settings.bundle */,
 				AA0000000000000000000014 /* Assets.xcassets */,
 			);
@@ -110,6 +113,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA0000000000000000000009 /* PauseApp.swift in Sources */,
+				AA0000000000000000000017 /* ChildExchange.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,6 +207,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Pause listens to one answer on this iPhone after you choose Ask how they’re feeling.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				MARKETING_VERSION = 0.1;
@@ -222,6 +227,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Pause listens to one answer on this iPhone after you choose Ask how they’re feeling.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				MARKETING_VERSION = 0.1;
