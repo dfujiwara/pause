@@ -299,7 +299,7 @@ private struct ResetScreen: View {
         let preferences = UserDefaults.standard
         guard preferences.bool(forKey: "speakOpeningCue"),
               !UIAccessibility.isVoiceOverRunning,
-              let voice = openingCueVoice() else { return }
+              let voice = SpokenVoice.preferredEnglish() else { return }
 
         let audioSession = AVAudioSession.sharedInstance()
         do {
@@ -317,26 +317,6 @@ private struct ResetScreen: View {
         let utterance = AVSpeechUtterance(string: Cue.opening.inward)
         utterance.voice = voice
         synthesizer.speak(utterance)
-    }
-
-    private func openingCueVoice() -> AVSpeechSynthesisVoice? {
-        let englishVoices = AVSpeechSynthesisVoice.speechVoices().filter {
-            Locale.Language(identifier: $0.language).languageCode?.identifier == "en"
-                && !$0.voiceTraits.contains(.isPersonalVoice)
-        }
-
-        for quality in [AVSpeechSynthesisVoiceQuality.premium, .enhanced] {
-            let voices = englishVoices.filter { $0.quality == quality }
-            if let voice = voices.first(where: { $0.language == "en-US" }) ?? voices.first {
-                return voice
-            }
-        }
-
-        if let voice = AVSpeechSynthesisVoice(language: "en-US"),
-           !voice.voiceTraits.contains(.isPersonalVoice) {
-            return voice
-        }
-        return englishVoices.first
     }
 
     private func stopOpeningSpeech() {

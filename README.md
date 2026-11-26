@@ -47,7 +47,9 @@ For the real download, use a supported physical iPhone with Apple Intelligence r
 
 ## Try a more natural voice
 
-In **Settings → Accessibility → Read & Speak → Voices → English** (called **Spoken Content** on some iOS versions), preview and download a **Premium** or **Enhanced** voice. Reopen Pause. It automatically prefers installed Premium voices, then Enhanced voices, and still works offline with the standard voice if neither is installed.
+On your iPhone, go to **Settings → Accessibility → Read & Speak → Voices → English** (called **Spoken Content** on some iOS versions). Preview and download a **Premium** or **Enhanced** voice, then reopen Pause and tap **Ask how they’re feeling** to hear the difference.
+
+Both the question and the optional opening cue prefer installed Premium voices, then Enhanced voices, with US English preferred within each tier. If neither is installed, Pause uses the standard voice. Playback works offline, and this voice download is separate from the speech-to-text model.
 
 ## Hear the opening cue in Silent Mode
 

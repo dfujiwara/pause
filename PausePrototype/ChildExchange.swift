@@ -338,7 +338,7 @@ private final class SpokenQuestion: NSObject, AVSpeechSynthesizerDelegate {
     private var playback: CheckedContinuation<Bool, Never>?
 
     func play() async -> Bool {
-        guard let voice = AVSpeechSynthesisVoice(language: "en-US") else { return false }
+        guard let voice = SpokenVoice.preferredEnglish() else { return false }
         let utterance = AVSpeechUtterance(string: ChildExchange.questionText)
         utterance.voice = voice
         synthesizer.delegate = self
