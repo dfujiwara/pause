@@ -30,7 +30,7 @@ Use a supported iPhone with Apple Intelligence enabled and its model and the US 
 2. Tap **Ask how they’re feeling** and allow microphone access if prompted. Listen for **“How are you feeling?”** even in Silent Mode. Check that **Listening…** and the system microphone indicator appear only after the question finishes.
 3. Speak, pause, then speak again. Check that **Hearing speech** indicates speech without showing a transcript and that pausing doesn't end the exchange. Tap **Done**; the mic should stop and the labeled **General suggestion** should appear. The suggestion is not yet personalized. Try again without tapping **Done**; the mic should stop after 30 seconds.
 4. Repeat with **Cancel**, locking the phone, and leaving for the Home Screen while the question is playing or the mic is active. Playback or recording should stop. Reopen Pause and check the exchange has been cleared.
-5. Deny microphone access in Settings and repeat; the labeled suggestion should appear without asking or listening. Repeat with Apple Intelligence unavailable and with VoiceOver running. Use **Back to reset** to dismiss the suggestion.
+5. Deny microphone access in Settings and repeat; the labeled suggestion should explain that microphone access was denied without asking or listening. Repeat with Apple Intelligence unavailable, VoiceOver running, or the US English speech-to-text model missing; check that the explanation identifies the blocker. **Back to reset**, leaving, or locking should clear the suggestion and its explanation.
 
 ## Try a more natural voice
 

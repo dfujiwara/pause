@@ -26,7 +26,7 @@ private struct ResetScreen: View {
         Group {
             switch childExchange.phase {
             case .reset: resetContent
-            case .suggestion: generalSuggestion
+            case .suggestion(let blocker): generalSuggestion(blocker: blocker)
             case .preparing, .asking, .listening, .finishing: childExchangeStatus
             }
         }
@@ -128,7 +128,7 @@ private struct ResetScreen: View {
         }
     }
 
-    private var generalSuggestion: some View {
+    private func generalSuggestion(blocker: ChildExchange.Blocker?) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text("General suggestion")
@@ -138,11 +138,34 @@ private struct ResetScreen: View {
                     .foregroundStyle(.secondary)
                 Text("“I’m here. You can tell me when you’re ready.”")
                     .font(.title2)
+                if let blocker {
+                    Text(exchangeBlockerMessage(blocker))
+                        .foregroundStyle(.secondary)
+                }
                 Button("Back to reset", action: childExchange.cancel)
-                .buttonStyle(.bordered)
+                    .buttonStyle(.bordered)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 32)
+        }
+    }
+
+    private func exchangeBlockerMessage(_ blocker: ChildExchange.Blocker) -> String {
+        switch blocker {
+        case .voiceOver:
+            "Pause doesn’t ask aloud or listen while VoiceOver is on."
+        case .appleIntelligenceUnsupported:
+            "This iPhone doesn’t support Apple Intelligence."
+        case .appleIntelligenceUnavailable:
+            "Apple Intelligence is off or isn’t ready on this iPhone. Check Settings → Apple Intelligence & Siri if available."
+        case .missingSpeechModel:
+            "The US English speech-to-text model isn’t installed. Hearing the opening cue doesn’t mean listening is set up."
+        case .speechModelDownloading:
+            "The US English speech-to-text model is downloading. Wait for it to finish, then try again."
+        case .microphoneDenied:
+            "Pause doesn’t have microphone access. You can allow it in Settings → Privacy & Security → Microphone."
+        case .unknown:
+            "Pause couldn’t complete the spoken exchange. You can go back to reset and try again."
         }
     }
 

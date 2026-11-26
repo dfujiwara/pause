@@ -6,8 +6,14 @@ import UIKit
 
 @MainActor @Observable
 final class ChildExchange {
-    enum Phase {
-        case reset, preparing, asking, listening, finishing, suggestion
+    enum Phase: Equatable {
+        case reset, preparing, asking, listening, finishing
+        case suggestion(Blocker?)
+    }
+
+    enum Blocker: Error {
+        case voiceOver, appleIntelligenceUnsupported, appleIntelligenceUnavailable
+        case missingSpeechModel, speechModelDownloading, microphoneDenied, unknown
     }
 
     static let questionText = "How are you feeling?"
@@ -63,35 +69,47 @@ final class ChildExchange {
     }
 
     private func run() async {
+        let blocker: Blocker?
         do {
             try await askAndListen()
+            blocker = nil
+        } catch let known as Blocker {
+            blocker = known
         } catch {
-            // Fail closed: the same suggestion works without audio or a model.
+            blocker = phase == .listening || phase == .finishing ? nil : .unknown
         }
         guard !Task.isCancelled else { return }
         clearAudio()
-        phase = .suggestion
+        phase = .suggestion(blocker)
     }
 
     private func askAndListen() async throws {
-        guard !UIAccessibility.isVoiceOverRunning,
-              case .available = SystemLanguageModel.default.availability,
-              SpeechTranscriber.isAvailable,
-              let locale = await SpeechTranscriber.supportedLocale(equivalentTo: Locale(identifier: "en-US")) else { return }
+        try checkVoiceOver()
+        switch SystemLanguageModel.default.availability {
+        case .available: break
+        case .unavailable(.deviceNotEligible): throw Blocker.appleIntelligenceUnsupported
+        case .unavailable: throw Blocker.appleIntelligenceUnavailable
+        @unknown default: throw Blocker.unknown
+        }
+        guard SpeechTranscriber.isAvailable,
+              let locale = await SpeechTranscriber.supportedLocale(equivalentTo: Locale(identifier: "en-US")) else {
+            throw Blocker.unknown
+        }
 
         try Task.checkCancellation()
         let answer = LocalAnswer(locale: locale)
         self.answer = answer
-        guard let format = try await answer.prepare() else { return }
+        let format = try await answer.prepare()
         try Task.checkCancellation()
-        guard await AVAudioApplication.requestRecordPermission() else { return }
+        try checkVoiceOver()
+        guard await AVAudioApplication.requestRecordPermission() else { throw Blocker.microphoneDenied }
         try Task.checkCancellation()
         while !sceneIsActive {
             await withCheckedContinuation { activation = $0 }
             try Task.checkCancellation()
         }
 
-        guard !UIAccessibility.isVoiceOverRunning else { return }
+        try checkVoiceOver()
         let session = AVAudioSession.sharedInstance()
         ownsAudioSession = true
         try session.setCategory(.playback, options: .mixWithOthers)
@@ -99,11 +117,11 @@ final class ChildExchange {
         let question = SpokenQuestion()
         self.question = question
         phase = .asking
-        guard await question.play() else { return }
+        guard await question.play() else { throw Blocker.unknown }
         try Task.checkCancellation()
 
         try session.setCategory(.playAndRecord, options: [.defaultToSpeaker, .mixWithOthers])
-        guard !UIAccessibility.isVoiceOverRunning else { return }
+        try checkVoiceOver()
         try answer.startInput(format: format) { [weak self, weak answer] in
             guard let self, let answer, self.answer === answer, phase == .listening else { return }
             cancel()
@@ -117,6 +135,10 @@ final class ChildExchange {
             guard let self, phase == .listening else { return }
             hearsSpeech = detected
         }
+    }
+
+    private func checkVoiceOver() throws {
+        if UIAccessibility.isVoiceOverRunning { throw Blocker.voiceOver }
     }
 
     private func resumeAfterActivation() {
@@ -196,10 +218,18 @@ private final class LocalAnswer {
         transcriber = SpeechTranscriber(locale: locale, preset: .transcription)
     }
 
-    func prepare() async throws -> AVAudioFormat? {
+    func prepare() async throws -> AVAudioFormat {
         // Do not download models or start audio capture as part of an exchange.
-        guard await AssetInventory.status(forModules: modules) == .installed,
-              let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: modules) else { return nil }
+        switch await AssetInventory.status(forModules: modules) {
+        case .installed: break
+        case .supported: throw ChildExchange.Blocker.missingSpeechModel
+        case .downloading: throw ChildExchange.Blocker.speechModelDownloading
+        case .unsupported: throw ChildExchange.Blocker.unknown
+        @unknown default: throw ChildExchange.Blocker.unknown
+        }
+        guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: modules) else {
+            throw ChildExchange.Blocker.unknown
+        }
         try await analyzer.prepareToAnalyze(in: format)
         return format
     }
