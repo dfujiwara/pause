@@ -73,28 +73,43 @@ private struct PauseScreen: View {
 
     private var checkInContent: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(spacing: 24) {
                 Text(ChildExchange.questionText)
                     .font(.system(size: cueSize, weight: .semibold))
                     .accessibilityAddTraits(.isHeader)
 
-                VStack(alignment: .leading, spacing: 8) {
-                    Button("Ask aloud", action: childExchange.start)
-                        .buttonStyle(.borderedProminent)
-                    Text("Asks aloud, then listens")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 12) {
+                        askAloudButton
+                        quickResetButton
+                    }
+                    .fixedSize(horizontal: true, vertical: false)
 
-                Button("Quick reset") {
-                    showsReset = true
-                    speakOpeningCueIfEnabled()
+                    VStack(spacing: 24) {
+                        askAloudButton
+                        quickResetButton
+                    }
                 }
-                .buttonStyle(.bordered)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .controlSize(.large)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
             .padding(.vertical, 32)
         }
+        .defaultScrollAnchor(.center, for: .alignment)
+    }
+
+    private var askAloudButton: some View {
+        Button("Ask aloud", action: childExchange.start)
+            .buttonStyle(.borderedProminent)
+    }
+
+    private var quickResetButton: some View {
+        Button("Quick reset") {
+            showsReset = true
+            speakOpeningCueIfEnabled()
+        }
+        .buttonStyle(.bordered)
     }
 
     private func closeReset() {
