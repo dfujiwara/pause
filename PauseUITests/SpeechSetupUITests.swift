@@ -4,9 +4,9 @@ import XCTest
 final class SpeechSetupUITests: XCTestCase {
     func testExplicitDownloadShowsProgressThenReadyWithoutResumingExchange() throws {
         let app = try launch(scenario: "download")
-        let ask = app.buttons["Ask how they’re feeling"]
+        let ask = app.buttons["Ask aloud"]
         let download = app.buttons["Download speech model"]
-        let back = app.buttons["Back to reset"]
+        let back = app.buttons["Back to check-in"]
 
         XCTAssertTrue(ask.exists)
         XCTAssertFalse(download.exists)
@@ -26,13 +26,13 @@ final class SpeechSetupUITests: XCTestCase {
         XCTAssertTrue(ask.exists)
         ask.tap()
         // The fixture has installed assets but no simulated audio pipeline.
-        XCTAssertTrue(app.staticTexts["Pause couldn’t complete the spoken exchange. You can go back to reset and try again."].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Pause couldn’t complete the spoken exchange. You can go back to check-in and try again."].waitForExistence(timeout: 5))
         XCTAssertFalse(download.exists)
     }
 
     func testFailedDownloadCanBeRetriedFromGeneralSuggestion() throws {
         let app = try launch(scenario: "retry")
-        app.buttons["Ask how they’re feeling"].tap()
+        app.buttons["Ask aloud"].tap()
         let download = app.buttons["Download speech model"]
         XCTAssertTrue(download.waitForExistence(timeout: 5))
         download.tap()
@@ -40,7 +40,7 @@ final class SpeechSetupUITests: XCTestCase {
         let retry = app.buttons["Retry download"]
         XCTAssertTrue(retry.waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Couldn’t download the speech model. Check your connection and try again."].exists)
-        XCTAssertTrue(app.buttons["Back to reset"].isEnabled)
+        XCTAssertTrue(app.buttons["Back to check-in"].isEnabled)
         retry.tap()
 
         XCTAssertFalse(retry.exists)
@@ -48,50 +48,50 @@ final class SpeechSetupUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Speech model ready."].waitForExistence(timeout: 10))
     }
 
-    func testBackToResetDuringDownloadStaysOnReset() throws {
+    func testBackToCheckInDuringDownloadStaysOnCheckIn() throws {
         let app = try launch(scenario: "download")
         startDownload(in: app)
-        app.buttons["Back to reset"].tap()
-        assertStaysOnReset(in: app)
+        app.buttons["Back to check-in"].tap()
+        assertStaysOnCheckIn(in: app)
     }
 
     func testAskingAgainDuringDownloadShowsTheExistingDownloadThroughCompletion() throws {
         let app = try launch(scenario: "download")
         startDownload(in: app)
-        app.buttons["Back to reset"].tap()
-        app.buttons["Ask how they’re feeling"].tap()
+        app.buttons["Back to check-in"].tap()
+        app.buttons["Ask aloud"].tap()
 
         XCTAssertTrue(app.staticTexts["Downloading US English speech-to-text model…"].exists)
         XCTAssertFalse(app.buttons["Download speech model"].exists)
         XCTAssertTrue(app.staticTexts["Speech model ready."].waitForExistence(timeout: 10))
     }
 
-    func testLeavingDuringDownloadStaysOnResetAfterReopen() throws {
+    func testLeavingDuringDownloadStaysOnCheckInAfterReopen() throws {
         let app = try launch(scenario: "download")
         startDownload(in: app)
         XCUIDevice.shared.press(.home)
         app.activate()
-        assertStaysOnReset(in: app)
+        assertStaysOnCheckIn(in: app)
     }
 
     func testUnsupportedAssetsDoNotOfferDownload() throws {
         let app = try launch(scenario: "unsupported")
-        app.buttons["Ask how they’re feeling"].tap()
+        app.buttons["Ask aloud"].tap()
         XCTAssertTrue(app.staticTexts["General suggestion"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["Download speech model"].exists)
-        XCTAssertTrue(app.buttons["Back to reset"].isEnabled)
+        XCTAssertTrue(app.buttons["Back to check-in"].isEnabled)
     }
 
     private func startDownload(in app: XCUIApplication) {
-        app.buttons["Ask how they’re feeling"].tap()
+        app.buttons["Ask aloud"].tap()
         let download = app.buttons["Download speech model"]
         XCTAssertTrue(download.waitForExistence(timeout: 5))
         download.tap()
         XCTAssertTrue(app.staticTexts["Downloading US English speech-to-text model…"].exists)
     }
 
-    private func assertStaysOnReset(in app: XCUIApplication) {
-        let ask = app.buttons["Ask how they’re feeling"]
+    private func assertStaysOnCheckIn(in app: XCUIApplication) {
+        let ask = app.buttons["Ask aloud"]
         XCTAssertTrue(ask.exists)
         // Wait longer than the fixture's in-flight download.
         XCTAssertFalse(app.staticTexts["General suggestion"].waitForExistence(timeout: 7))
