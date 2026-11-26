@@ -5,7 +5,7 @@ final class ChildReplyUITests: XCTestCase {
     func testDoneShowsOneReplyUntilBackToReset() throws {
         let app = try launch(scenario: "reply")
         let done = startListening(in: app)
-        let reply = app.staticTexts["“You wanted another turn.”"]
+        let reply = app.staticTexts["“I heard you say ‘I wanted another turn.’”"]
         XCTAssertFalse(reply.exists)
         XCTAssertFalse(app.staticTexts["General suggestion"].exists)
         done.tap()
@@ -18,13 +18,20 @@ final class ChildReplyUITests: XCTestCase {
         XCTAssertFalse(reply.exists)
     }
 
-    func testUnsuitableReplyShowsLabeledGeneralSuggestion() throws {
+    func testUngroundedAdviceShowsLabeledGeneralSuggestion() throws {
         let app = try launch(scenario: "unsuitable")
         startListening(in: app).tap()
 
         XCTAssertTrue(app.staticTexts["General suggestion"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["“I’m here. You can tell me when you’re ready.”"].exists)
-        XCTAssertFalse(app.staticTexts["“Tell me more?”"].exists)
+        XCTAssertFalse(app.staticTexts["“You should share next time.”"].exists)
+    }
+
+    func testReplyCannotDropTheChildsQualifier() throws {
+        let app = try launch(scenario: "qualifier")
+        startListening(in: app).tap()
+
+        XCTAssertTrue(app.staticTexts["General suggestion"].waitForExistence(timeout: 5))
     }
 
     func testDoneWithoutAnAnswerShowsGeneralSuggestion() throws {
@@ -36,7 +43,7 @@ final class ChildReplyUITests: XCTestCase {
     }
 
     func testLeavingDuringGenerationDiscardsALateReply() throws {
-        let app = try launch(scenario: "slow")
+        let app = try launch(scenario: "lateReply")
         startListening(in: app).tap()
         XCTAssertTrue(app.staticTexts["Finding a reply…"].waitForExistence(timeout: 5))
         XCUIDevice.shared.press(.home)
