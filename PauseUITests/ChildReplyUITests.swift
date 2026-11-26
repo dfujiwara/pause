@@ -34,6 +34,13 @@ final class ChildReplyUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["General suggestion"].waitForExistence(timeout: 5))
     }
 
+    func testReplyCannotQuoteAnEarlierRetractedStatement() throws {
+        let app = try launch(scenario: "retracted")
+        startListening(in: app).tap()
+
+        XCTAssertTrue(app.staticTexts["General suggestion"].waitForExistence(timeout: 5))
+    }
+
     func testDoneWithoutAnAnswerShowsGeneralSuggestion() throws {
         let app = try launch(scenario: "silence")
         startListening(in: app).tap()
