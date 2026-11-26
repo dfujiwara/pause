@@ -2,20 +2,41 @@ import XCTest
 
 @MainActor
 final class ChildReplyUITests: XCTestCase {
-    func testDoneShowsOneReplyUntilBackToReset() throws {
+    func testLaunchShowsCheckInAndKeepsQuickResetAvailable() throws {
+        let app = try launch(scenario: "reply")
+        XCTAssertTrue(app.staticTexts["How are you feeling?"].exists)
+        XCTAssertTrue(app.buttons["Ask aloud"].exists)
+        XCTAssertFalse(app.staticTexts["Listening…"].exists)
+        XCTAssertFalse(app.buttons["Done"].exists)
+
+        app.buttons["Quick reset"].tap()
+        XCTAssertTrue(app.staticTexts["Let one breath out before you answer."].exists)
+        XCTAssertTrue(app.buttons["I’ve asked three times"].exists)
+        XCTAssertFalse(app.buttons["Ask aloud"].exists)
+        app.buttons["Back to check-in"].tap()
+        XCTAssertTrue(app.buttons["Ask aloud"].exists)
+    }
+
+    func testDoneShowsThreeReplyOptionsUntilBackToCheckIn() throws {
         let app = try launch(scenario: "reply")
         let done = startListening(in: app)
-        let reply = app.staticTexts["“I heard you say ‘I wanted another turn.’”"]
-        XCTAssertFalse(reply.exists)
+        let reflection = app.staticTexts["“I heard you say ‘I wanted another turn.’”"]
+        let support = app.staticTexts["“I’m here with you.”"]
+        let invitation = app.staticTexts["“Do you want to tell me more?”"]
+        XCTAssertFalse(reflection.exists)
         XCTAssertFalse(app.staticTexts["General suggestion"].exists)
         done.tap()
 
-        XCTAssertTrue(reply.waitForExistence(timeout: 5))
+        XCTAssertTrue(reflection.waitForExistence(timeout: 5))
+        XCTAssertTrue(support.exists)
+        XCTAssertTrue(invitation.exists)
         XCTAssertFalse(app.staticTexts["Listening…"].exists)
         XCTAssertFalse(done.exists)
-        app.buttons["Back to reset"].tap()
-        XCTAssertTrue(app.buttons["Ask how they’re feeling"].exists)
-        XCTAssertFalse(reply.exists)
+        app.buttons["Back to check-in"].tap()
+        XCTAssertTrue(app.buttons["Ask aloud"].exists)
+        XCTAssertFalse(reflection.exists)
+        XCTAssertFalse(support.exists)
+        XCTAssertFalse(invitation.exists)
     }
 
     func testUngroundedAdviceShowsLabeledGeneralSuggestion() throws {
@@ -52,19 +73,19 @@ final class ChildReplyUITests: XCTestCase {
     func testLeavingDuringGenerationDiscardsALateReply() throws {
         let app = try launch(scenario: "lateReply")
         startListening(in: app).tap()
-        XCTAssertTrue(app.staticTexts["Finding a reply…"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Finding replies…"].waitForExistence(timeout: 5))
         XCUIDevice.shared.press(.home)
         app.activate()
 
-        let ask = app.buttons["Ask how they’re feeling"]
+        let ask = app.buttons["Ask aloud"]
         XCTAssertTrue(ask.waitForExistence(timeout: 5))
         // Wait longer than the simulated model, which returns even after cancellation.
-        XCTAssertFalse(app.buttons["Back to reset"].waitForExistence(timeout: 9))
+        XCTAssertFalse(app.buttons["Back to check-in"].waitForExistence(timeout: 9))
         XCTAssertTrue(ask.exists)
     }
 
     private func startListening(in app: XCUIApplication) -> XCUIElement {
-        app.buttons["Ask how they’re feeling"].tap()
+        app.buttons["Ask aloud"].tap()
         let done = app.buttons["Done"]
         XCTAssertTrue(done.waitForExistence(timeout: 5))
         return done

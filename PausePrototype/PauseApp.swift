@@ -6,12 +6,12 @@ import SwiftUI
 struct PauseApp: App {
     var body: some Scene {
         WindowGroup {
-            ResetScreen()
+            PauseScreen()
         }
     }
 }
 
-private struct ResetScreen: View {
+private struct PauseScreen: View {
     @Environment(\.scenePhase) private var scenePhase
     @ScaledMetric(relativeTo: .largeTitle) private var cueSize: CGFloat = 36
     @State private var situation: Situation?
@@ -19,21 +19,22 @@ private struct ResetScreen: View {
     @State private var nextIndex: [Situation: Int] = [:]
     @State private var scrollPosition = ScrollPosition(edge: .top)
     @State private var openingSpeech: AVSpeechSynthesizer?
-    @State private var shouldAttemptOpeningSpeech = true
+    @State private var showsReset = false
     @State private var childExchange = ChildExchange()
 
     var body: some View {
         Group {
             switch childExchange.phase {
-            case .reply(let line) where scenePhase == .active:
-                exchangeResult(title: "You can say", line: line) {}
-            case .reset, .reply: resetContent
+            case .reply(let reply) where scenePhase == .active:
+                exchangeResult(title: "You can say", lines: reply.lines) {}
+            case .reset where showsReset: resetContent
+            case .reset, .reply: checkInContent
             case .suggestion(let blocker): generalSuggestion(blocker: blocker)
             case .preparing: childExchangeStatus(title: "Getting ready…")
             case .asking: childExchangeStatus(title: ChildExchange.questionText)
             case .listening: childExchangeStatus(title: "Listening…")
             case .finishing: childExchangeStatus(title: "Finishing…")
-            case .generating: childExchangeStatus(title: "Finding a reply…")
+            case .generating: childExchangeStatus(title: "Finding replies…")
             }
         }
         .frame(maxWidth: 460)
@@ -43,21 +44,15 @@ private struct ResetScreen: View {
             switch phase {
             case .active:
                 childExchange.sceneDidActivate()
-                guard shouldAttemptOpeningSpeech else { return }
-                shouldAttemptOpeningSpeech = false
-                speakOpeningCueIfEnabled()
+
             case .inactive:
                 stopOpeningSpeech()
                 childExchange.sceneDidBecomeInactive()
             case .background:
                 stopOpeningSpeech()
-                // Only a background transition makes the next activation a new open.
-                shouldAttemptOpeningSpeech = true
                 childExchange.sceneDidBecomeInactive()
                 childExchange.cancel()
-                situation = nil
-                cue = .opening
-                scrollPosition.scrollTo(edge: .top)
+                closeReset()
             @unknown default:
                 stopOpeningSpeech()
                 childExchange.cancel()
@@ -74,6 +69,40 @@ private struct ResetScreen: View {
                 childExchange.interruptAudio()
             }
         }
+    }
+
+    private var checkInContent: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                Text(ChildExchange.questionText)
+                    .font(.system(size: cueSize, weight: .semibold))
+                    .accessibilityAddTraits(.isHeader)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Button("Ask aloud", action: childExchange.start)
+                        .buttonStyle(.borderedProminent)
+                    Text("Asks aloud, then listens")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                Button("Quick reset") {
+                    showsReset = true
+                    speakOpeningCueIfEnabled()
+                }
+                .buttonStyle(.bordered)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 32)
+        }
+    }
+
+    private func closeReset() {
+        stopOpeningSpeech()
+        showsReset = false
+        situation = nil
+        cue = .opening
+        scrollPosition = ScrollPosition(edge: .top)
     }
 
     private var resetContent: some View {
@@ -128,7 +157,7 @@ private struct ResetScreen: View {
     private func generalSuggestion(blocker: ChildExchange.Blocker?) -> some View {
         exchangeResult(
             title: "General suggestion",
-            line: "I’m here. You can tell me when you’re ready.",
+            lines: ["I’m here. You can tell me when you’re ready."],
             note: "This line isn’t based on your child’s answer."
         ) {
             if blocker == .missingSpeechModel {
@@ -142,7 +171,7 @@ private struct ResetScreen: View {
 
     private func exchangeResult<Details: View>(
         title: LocalizedStringKey,
-        line: String,
+        lines: [String],
         note: LocalizedStringKey? = nil,
         @ViewBuilder details: () -> Details
     ) -> some View {
@@ -155,11 +184,13 @@ private struct ResetScreen: View {
                     Text(note)
                         .foregroundStyle(.secondary)
                 }
-                Text("“\(line)”")
-                    .font(.title2)
-                    .privacySensitive()
+                ForEach(lines, id: \.self) { line in
+                    Text("“\(line)”")
+                        .font(.title2)
+                        .privacySensitive()
+                }
                 details()
-                Button("Back to reset", action: childExchange.cancel)
+                Button("Back to check-in", action: childExchange.cancel)
                     .buttonStyle(.bordered)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -180,7 +211,7 @@ private struct ResetScreen: View {
         case .ready:
             Text("Speech model ready.")
                 .font(.headline)
-            Text("Go back to reset and tap Ask how they’re feeling when you’re ready.")
+            Text("Go back to check-in and tap Ask aloud when you’re ready.")
                 .foregroundStyle(.secondary)
         case .failed:
             Text("Couldn’t download the speech model. Check your connection and try again.")
@@ -205,7 +236,7 @@ private struct ResetScreen: View {
         case .microphoneDenied:
             "Pause doesn’t have microphone access. You can allow it in Settings → Privacy & Security → Microphone."
         case .unknown:
-            "Pause couldn’t complete the spoken exchange. You can go back to reset and try again."
+            "Pause couldn’t complete the spoken exchange. You can go back to check-in and try again."
         }
     }
 
@@ -231,17 +262,8 @@ private struct ResetScreen: View {
             }
             .accessibilityElement(children: .combine)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Button("Ask how they’re feeling") {
-                    stopOpeningSpeech()
-                    childExchange.start()
-                }
+            Button("Back to check-in", action: closeReset)
                 .buttonStyle(.bordered)
-                .accessibilityHint("Asks aloud, then listens when voice exchange is available.")
-                Text("Asks aloud, then listens")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

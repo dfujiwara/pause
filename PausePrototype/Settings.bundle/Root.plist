@@ -8,7 +8,7 @@
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 			<key>FooterText</key>
-			<string>Speak in Silent Mode only applies when Speak Opening Cue is on. The cue may play through the iPhone speaker.</string>
+			<string>Speak Opening Cue reads the first cue when you tap Quick reset. Speak in Silent Mode only applies to that cue, which may play through the iPhone speaker.</string>
 		</dict>
 		<dict>
 			<key>Type</key>

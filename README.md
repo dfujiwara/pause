@@ -1,8 +1,8 @@
 # Pause · throwaway iPhone prototype
 
-**Question:** Can you go from pocket to cue quickly enough to take one breath before you answer?
+Pause opens on **“How are you feeling?”** Tap **Ask aloud** to ask your child, then listen for one answer. Pause offers three short lines you can choose from: a reflection, an offer of support, and an invitation to say more. Opening the app never speaks or starts the mic.
 
-The screen opens on “Let one breath out before you answer.” The three situations are optional; each tap shows a cue for you and a smaller line you can say out loud. Put the phone away whenever you’re ready. Leaving the app for the background resets the screen to the opening cue. Only the speech preferences are saved; phrase rotation stays in memory, and nothing is sent.
+Tap **Quick reset** for “Let one breath out before you answer” and three optional situation cues. Leaving the app returns you to the check-in. Only the speech preferences are saved; phrase rotation and exchanges stay in memory, and child audio, transcripts, and replies never leave the device.
 
 ## Run on your iPhone
 
@@ -18,19 +18,19 @@ Touch and hold the Lock Screen → **Customize** → **Lock Screen**. Remove one
 
 ## Try it
 
-- Lock the phone and put it in your pocket. Wake it, activate the control, read the opening line, and put it away. Did you need more effort or time than you’d realistically have?
-- Open it again, tap the situation you recognize most, and try the new line. Tap the same situation again to see another. Is reading the second line worth an extra tap?
-- Lock the phone while showing a situation, then use the shortcut again. Does it go straight to the opening cue?
+- Lock the phone and put it in your pocket. Wake it, activate the control, and tap **Quick reset**. Can you read the cue and put the phone away in time to help?
+- Tap the situation you recognize most, and try the new line. Tap the same situation again to see another. Is reading the second line worth an extra tap?
+- Lock the phone while showing a situation, then use the shortcut again. It should open to the check-in. **Quick reset** should start at the opening cue.
 
 ## Check the child exchange on your iPhone
 
 Use a supported iPhone with Apple Intelligence enabled and its model and the US English on-device Speech assets already installed. Pause does not download assets during an exchange. Use an adult tester for this walkthrough. After granting microphone access, turn on airplane mode and turn Wi-Fi off to check the complete exchange offline.
 
-1. Turn off opening speech, turn on Silent Mode, and open Pause. It should show the usual opening cue and three situation buttons without asking anything or accessing the mic.
-2. Tap **Ask how they’re feeling** and allow microphone access if prompted. Listen for **“How are you feeling?”** even in Silent Mode. Check that **Listening…** and the system microphone indicator appear only after the question finishes.
-3. Say “I wanted another turn,” pausing mid-answer. **Hearing speech** should indicate speech without showing a transcript or ending the exchange during the pause. Tap **Done**. The mic should stop before the reply appears. Check that one short, silent line acknowledges what you said without guessing why you said it or telling you what to do. It should stay on screen with the mic off. Tap **Back to reset** and check the line is gone.
-4. Try a different answer, such as “I miss my friend,” and let listening reach 30 seconds without tapping **Done**. Check that the mic stops and the reply reflects the new answer. On another attempt, say nothing and tap **Done**. Check that **General suggestion** appears instead of a personalized line.
-5. In separate attempts, go to the Home Screen or lock the phone while **Finding a reply…** is visible. Reopen and wait a few seconds; neither a reply nor a fallback should appear. Repeat after a reply is already visible. Also check leaving or locking while the question is playing or the mic is active. Playback or recording should stop, and reopening should start at reset. **Cancel** should also clear an in-progress exchange.
+1. Turn on Silent Mode and open Pause. It should show **How are you feeling?** without speaking or accessing the mic.
+2. Tap **Ask aloud** and allow microphone access if prompted. Listen for **“How are you feeling?”** even in Silent Mode. Check that **Listening…** and the system microphone indicator appear only after the question finishes.
+3. Say “I wanted another turn,” pausing mid-answer. **Hearing speech** should indicate speech without showing a transcript or ending the exchange during the pause. Tap **Done**. The mic should stop before three short reply options appear. Check that one reflects the answer, one offers support, and one invites you to say more. None should be spoken or guess why you said it. Tap **Back to check-in** and check that the replies are gone.
+4. Try a different answer, such as “I miss my friend,” and let listening reach 30 seconds without tapping **Done**. Check that the mic stops and the reflection matches the new answer. On another attempt, say nothing and tap **Done**. Check that one **General suggestion** appears instead of personalized options.
+5. In separate attempts, go to the Home Screen or lock the phone while **Finding replies…** is visible. Reopen and wait a few seconds; neither replies nor a fallback should appear. Repeat with replies visible and while the question is playing or the mic is active. Playback or recording should stop, and reopening should start at the check-in. **Cancel** should also clear an in-progress exchange.
 6. Deny microphone access in Settings and repeat; the labeled suggestion should explain that microphone access was denied without asking or listening. Repeat with Apple Intelligence unavailable, VoiceOver running, or the US English speech-to-text model missing; check that the explanation identifies the blocker.
 
 ## Check speech model setup
@@ -39,15 +39,15 @@ For the setup UI tests, select an iPhone simulator in Xcode and run **Product �
 
 For the real download, use a supported physical iPhone with Apple Intelligence ready and the required US English Speech assets **not** installed. Turn off opening speech and leave microphone access off if it was already granted. Use an adult tester.
 
-1. Connect to Wi-Fi. Open Pause (including via the Lock Screen control): only the reset should appear. Tap **Ask how they’re feeling** and confirm **General suggestion** offers **Download speech model** without a microphone prompt or spoken question.
-2. Tap **Download speech model**. Check for the downloading state and then **Speech model ready.** with no question, microphone prompt, or system mic indicator. Check **Back to reset** is available.
+1. Connect to Wi-Fi. Open Pause (including via the Lock Screen control): only the check-in should appear. Tap **Ask aloud** and confirm **General suggestion** offers **Download speech model** without a microphone prompt or spoken question.
+2. Tap **Download speech model**. Check for the downloading state and then **Speech model ready.** with no question, microphone prompt, or system mic indicator. Check **Back to check-in** is available.
 3. On another attempt with assets still missing, turn cellular data off before opening Pause. While the download is in progress, turn off the Wi-Fi hotspot or access point from another device so Pause stays in the foreground. If iOS reports a failure, restore Wi-Fi and tap **Retry download**. Check that the retry reaches **Speech model ready.** If iOS resumes on its own, this attempt did not exercise the failure state.
-4. While a download is still in progress, tap **Back to reset**, go to the Home Screen, or lock the phone. Pause should stay on or reopen to reset, not restore setup or start an exchange when the download completes. Repeat on a device with missing assets if needed.
-5. From reset, tap **Ask how they’re feeling** and grant mic access when prompted; end that exchange. Turn on airplane mode and make sure Wi-Fi is off. Reopen Pause and tap **Ask how they’re feeling** again. Confirm the question plays and **Listening…** picks up speech offline, then tap **Done**.
+4. While a download is still in progress, tap **Back to check-in**, go to the Home Screen, or lock the phone. Pause should stay on or reopen to the check-in, not restore setup or start an exchange when the download completes. Repeat on a device with missing assets if needed.
+5. Tap **Ask aloud** and grant mic access when prompted; end that exchange. Turn on airplane mode and make sure Wi-Fi is off. Reopen Pause and tap **Ask aloud** again. Confirm the question plays and **Listening…** picks up speech offline, then tap **Done**.
 
 ## Try a more natural voice
 
-On your iPhone, go to **Settings → Accessibility → Read & Speak → Voices → English** (called **Spoken Content** on some iOS versions). Preview and download a **Premium** or **Enhanced** voice, then reopen Pause and tap **Ask how they’re feeling** to hear the difference.
+On your iPhone, go to **Settings → Accessibility → Read & Speak → Voices → English** (called **Spoken Content** on some iOS versions). Preview and download a **Premium** or **Enhanced** voice, then reopen Pause and tap **Ask aloud** to hear the difference.
 
 Both the question and the optional opening cue prefer installed Premium voices, then Enhanced voices, with US English preferred within each tier. If neither is installed, Pause uses the standard voice. Playback works offline, and this voice download is separate from the speech-to-text model.
 
@@ -59,20 +59,11 @@ In **Settings → Apps → Pause**, turn on both **Speak Opening Cue** and **Spe
 
 For a cold launch, swipe Pause away in the app switcher, then open it. Start with Silent Mode and VoiceOver off, and an audible volume on your usual audio route.
 
-1. On a fresh install, check **Settings → Apps → Pause → Speak Opening Cue** is off. Cold-launch Pause: it should be silent, and the opening pair and three situation buttons should be usable immediately.
-2. Turn the switch on and cold-launch. Listen for exactly one “Let one breath out before you answer.” The “Hang on. Give me a second.” line and situation cues should never be spoken by Pause. Cold-launch again and confirm the switch still has effect.
-3. Repeat the cold launch in airplane mode with Wi-Fi off; the cue should work without downloading a voice. Turn Silent Mode on and repeat with **Speak in Silent Mode** off: the screen should work without speech. Turn **Speak in Silent Mode** on and repeat: the cue should play once. With the override still on, repeat with music already playing: the cue should use the current route without pausing or lowering the music.
-4. With the switch still on, enable VoiceOver and cold-launch. Only VoiceOver should speak; use it to select a situation and verify it announces both new lines. Turn VoiceOver off before the next check.
-5. In separate launches, lock the phone, leave for the Home Screen, or tap a situation as soon as the cue starts. Each action should stop the cue, with no resumption and no speech for the situation.
-6. Turn **Speak Opening Cue** off, leaving **Speak in Silent Mode** on, then cold-launch twice. Both launches should be silent. Turn the override off again after the check.
-
-## Check reopening from your pocket on your iPhone
-
-The owner should run this on the physical iPhone with the Lock Screen control configured above. The simulator doesn't verify the actual pocket flow or iPhone audio behavior.
-
-1. Turn **Speak Opening Cue** on, with Silent Mode and VoiceOver off. Open Pause, lock the phone, and pocket it. Wake it, activate the Lock Screen control, and authenticate if needed. Listen for the inward opening cue once, then put the phone away without another glance. Was it quick enough to buy a beat?
-2. In Pause, select any situation, then lock the phone while that pair is showing. Reopen from the Lock Screen control: the opening pair should be at the top, no situation should be selected, and only the inward opening cue should play once.
-3. Repeat the reset by leaving for the Home Screen and reopening via the icon, then by leaving for another app and returning via the app switcher. Don't swipe Pause away. Each return should restore the opening pair and speak once. Try opening and dismissing Control Center while the cue is speaking without leaving Pause: the cue should stop, not resume or replay. Locking or leaving during speech should also cut off the old cue; a new open should start a fresh cue, not continue the old one. Tapping a situation should cut off the cue without starting any new speech.
-4. Repeat a reopen in airplane mode, with Silent Mode on, with other audio playing, and with VoiceOver on, one condition at a time. Expect the same behavior as on cold launch. Finally, turn **Speak Opening Cue** off and return to Pause without force-quitting; the opening pair should be silent.
+1. On a fresh install, check **Settings → Apps → Pause → Speak Opening Cue** is off. Open Pause and tap **Quick reset**. Both screens should be silent.
+2. Turn the switch on and cold-launch. The check-in should still be silent. Tap **Quick reset** and listen for exactly one “Let one breath out before you answer.” Pause should not read the out-loud line or situation cues.
+3. Repeat in airplane mode; the cue should work without downloading a voice. With Silent Mode on, check that the cue only speaks when **Speak in Silent Mode** is on. With the override on and music playing, check that the cue doesn’t pause or lower the music.
+4. Enable VoiceOver and tap **Quick reset**. Only VoiceOver should speak. Select a situation and verify it announces both new lines.
+5. In separate attempts, lock the phone, leave the app, open Control Center, tap **Back to check-in**, or select a situation as soon as the cue starts. The cue should stop without resuming. After leaving or locking, reopening should show the silent check-in.
+6. Turn **Speak Opening Cue** off while leaving **Speak in Silent Mode** on. **Quick reset** should be silent.
 
 After a few real uses, decide whether hearing the cue bought a beat before answering without another glance. If access took too long, fix that before tuning speech. No tracking needed.
