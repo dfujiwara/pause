@@ -138,7 +138,9 @@ private struct ResetScreen: View {
                     .foregroundStyle(.secondary)
                 Text("“I’m here. You can tell me when you’re ready.”")
                     .font(.title2)
-                if let blocker {
+                if blocker == .missingSpeechModel {
+                    speechModelSetup
+                } else if let blocker {
                     Text(exchangeBlockerMessage(blocker))
                         .foregroundStyle(.secondary)
                 }
@@ -147,6 +149,29 @@ private struct ResetScreen: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 32)
+        }
+    }
+
+    @ViewBuilder
+    private var speechModelSetup: some View {
+        switch childExchange.speechModelSetup {
+        case .canDownload:
+            Text(exchangeBlockerMessage(.missingSpeechModel))
+                .foregroundStyle(.secondary)
+            Button("Download speech model", action: childExchange.downloadSpeechModel)
+                .buttonStyle(.borderedProminent)
+        case .downloading:
+            ProgressView("Downloading US English speech-to-text model…")
+        case .ready:
+            Text("Speech model ready.")
+                .font(.headline)
+            Text("Go back to reset and tap Ask how they’re feeling when you’re ready.")
+                .foregroundStyle(.secondary)
+        case .failed:
+            Text("Couldn’t download the speech model. Check your connection and try again.")
+                .foregroundStyle(.secondary)
+            Button("Retry download", action: childExchange.downloadSpeechModel)
+                .buttonStyle(.borderedProminent)
         }
     }
 

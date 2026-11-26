@@ -7,13 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA000000000000000000001A /* SpeechSetupUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000018 /* SpeechSetupUITests.swift */; };
 		AA0000000000000000000017 /* ChildExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000016 /* ChildExchange.swift */; };
 		AA0000000000000000000009 /* PauseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000005 /* PauseApp.swift */; };
 		AA0000000000000000000012 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000011 /* Settings.bundle */; };
 		AA0000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000014 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		AA0000000000000000000021 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA0000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA0000000000000000000007;
+			remoteInfo = Pause;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		AA0000000000000000000018 /* SpeechSetupUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechSetupUITests.swift; sourceTree = "<group>"; };
+		AA0000000000000000000019 /* PauseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PauseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0000000000000000000016 /* ChildExchange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildExchange.swift; sourceTree = "<group>"; };
 		AA0000000000000000000005 /* PauseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseApp.swift; sourceTree = "<group>"; };
 		AA0000000000000000000006 /* Pause.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pause.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -26,6 +39,7 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000003 /* PausePrototype */,
+				AA0000000000000000000023 /* PauseUITests */,
 				AA0000000000000000000004 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -45,8 +59,15 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000006 /* Pause.app */,
+				AA0000000000000000000019 /* PauseUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000023 /* PauseUITests */ = {
+			isa = PBXGroup;
+			children = (AA0000000000000000000018 /* SpeechSetupUITests.swift */);
+			path = PauseUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -68,6 +89,17 @@
 			productReference = AA0000000000000000000006 /* Pause.app */;
 			productType = "com.apple.product-type.application";
 		};
+		AA000000000000000000001C /* PauseUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA000000000000000000001D /* Build configuration list for PBXNativeTarget "PauseUITests" */;
+			buildPhases = (AA000000000000000000001B /* Sources */);
+			buildRules = ();
+			dependencies = (AA0000000000000000000022 /* PBXTargetDependency */);
+			name = PauseUITests;
+			productName = PauseUITests;
+			productReference = AA0000000000000000000019 /* PauseUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -76,6 +108,9 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 2720;
+				TargetAttributes = {
+					AA000000000000000000001C = {TestTargetID = AA0000000000000000000007; };
+				};
 			};
 			buildConfigurationList = AA000000000000000000000B /* Build configuration list for PBXProject "PausePrototype" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -91,6 +126,7 @@
 			projectRoot = "";
 			targets = (
 				AA0000000000000000000007 /* Pause */,
+				AA000000000000000000001C /* PauseUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -117,7 +153,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA000000000000000000001B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (AA000000000000000000001A /* SpeechSetupUITests.swift in Sources */);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA0000000000000000000022 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA0000000000000000000007 /* Pause */;
+			targetProxy = AA0000000000000000000021 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		AA000000000000000000000C /* Debug */ = {
@@ -213,6 +263,7 @@
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.pauseprototype;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -238,6 +289,32 @@
 			};
 			name = Release;
 		};
+		AA000000000000000000001E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.pauseprototype.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = Pause;
+			};
+			name = Debug;
+		};
+		AA000000000000000000001F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.pauseprototype.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = Pause;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -258,6 +335,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
+		};
+		AA000000000000000000001D /* Build configuration list for PBXNativeTarget "PauseUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000000000000000000001E /* Debug */,
+				AA000000000000000000001F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

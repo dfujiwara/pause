@@ -32,6 +32,18 @@ Use a supported iPhone with Apple Intelligence enabled and its model and the US 
 4. Repeat with **Cancel**, locking the phone, and leaving for the Home Screen while the question is playing or the mic is active. Playback or recording should stop. Reopen Pause and check the exchange has been cleared.
 5. Deny microphone access in Settings and repeat; the labeled suggestion should explain that microphone access was denied without asking or listening. Repeat with Apple Intelligence unavailable, VoiceOver running, or the US English speech-to-text model missing; check that the explanation identifies the blocker. **Back to reset**, leaving, or locking should clear the suggestion and its explanation.
 
+## Check speech model setup
+
+For the setup UI tests, select an iPhone simulator in Xcode and run **Product → Test** on the **Pause** scheme. The simulator uses scripted Speech asset states; it does not download Apple’s assets or test audio.
+
+For the real download, use a supported physical iPhone with Apple Intelligence ready and the required US English Speech assets **not** installed. Turn off opening speech and leave microphone access off if it was already granted. Use an adult tester.
+
+1. Connect to Wi-Fi. Open Pause (including via the Lock Screen control): only the reset should appear. Tap **Ask how they’re feeling** and confirm **General suggestion** offers **Download speech model** without a microphone prompt or spoken question.
+2. Tap **Download speech model**. Check for the downloading state and then **Speech model ready.** with no question, microphone prompt, or system mic indicator. Check **Back to reset** is available.
+3. On another attempt with assets still missing, turn cellular data off before opening Pause. While the download is in progress, turn off the Wi-Fi hotspot or access point from another device so Pause stays in the foreground. If iOS reports a failure, restore Wi-Fi and tap **Retry download**. Check that the retry reaches **Speech model ready.** If iOS resumes on its own, this attempt did not exercise the failure state.
+4. While a download is still in progress, tap **Back to reset**, go to the Home Screen, or lock the phone. Pause should stay on or reopen to reset, not restore setup or start an exchange when the download completes. Repeat on a device with missing assets if needed.
+5. From reset, tap **Ask how they’re feeling** and grant mic access when prompted; end that exchange. Turn on airplane mode and make sure Wi-Fi is off. Reopen Pause and tap **Ask how they’re feeling** again. Confirm the question plays and **Listening…** picks up speech offline, then tap **Done**.
+
 ## Try a more natural voice
 
 In **Settings → Accessibility → Read & Speak → Voices → English** (called **Spoken Content** on some iOS versions), preview and download a **Premium** or **Enhanced** voice. Reopen Pause. It automatically prefers installed Premium voices, then Enhanced voices, and still works offline with the standard voice if neither is installed.

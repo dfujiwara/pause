@@ -16,10 +16,17 @@ final class ChildExchange {
         case missingSpeechModel, speechModelDownloading, microphoneDenied, unknown
     }
 
+    enum SpeechModelSetup {
+        case canDownload, downloading, ready, failed
+    }
+
     static let questionText = "How are you feeling?"
 
     private(set) var phase: Phase = .reset
     private(set) var hearsSpeech = false
+    private(set) var speechModelSetup: SpeechModelSetup = .canDownload
+    @ObservationIgnored private var missingSpeechModel: SpeechModel?
+    @ObservationIgnored private var isInstallingSpeechModel = false
     @ObservationIgnored private var exchange: Task<Void, Never>?
     @ObservationIgnored private var deadline: Task<Void, Never>?
     @ObservationIgnored private var question: SpokenQuestion?
@@ -35,13 +42,40 @@ final class ChildExchange {
 
     func sceneDidBecomeInactive() {
         sceneIsActive = false
-        interruptAudio()
+        if phase == .suggestion(.missingSpeechModel) {
+            cancel()
+        } else {
+            interruptAudio()
+        }
     }
 
     func start() {
         guard phase == .reset, sceneIsActive else { return }
         phase = .preparing
         exchange = Task { await run() }
+    }
+
+    func downloadSpeechModel() {
+        guard sceneIsActive, phase == .suggestion(.missingSpeechModel),
+              speechModelSetup == .canDownload || speechModelSetup == .failed,
+              !isInstallingSpeechModel, let model = missingSpeechModel else { return }
+
+        speechModelSetup = .downloading
+        isInstallingSpeechModel = true
+        Task { [weak self] in
+            let result: SpeechModelSetup
+            do {
+                try await model.install()
+                result = await model.status() == .installed ? .ready : .failed
+            } catch {
+                result = .failed
+            }
+            guard let self else { return }
+            // Keep the in-flight guard even if Dad leaves. The system can keep downloading.
+            isInstallingSpeechModel = false
+            guard phase == .suggestion(.missingSpeechModel), speechModelSetup == .downloading else { return }
+            speechModelSetup = result
+        }
     }
 
     func finishListening() {
@@ -57,6 +91,8 @@ final class ChildExchange {
         exchange?.cancel()
         resumeAfterActivation()
         clearAudio()
+        missingSpeechModel = nil
+        speechModelSetup = .canDownload
         phase = .reset
     }
 
@@ -85,19 +121,31 @@ final class ChildExchange {
 
     private func askAndListen() async throws {
         try checkVoiceOver()
-        switch SystemLanguageModel.default.availability {
-        case .available: break
-        case .unavailable(.deviceNotEligible): throw Blocker.appleIntelligenceUnsupported
-        case .unavailable: throw Blocker.appleIntelligenceUnavailable
+        let model = try await SpeechModel.resolve()
+        try Task.checkCancellation()
+        let installWasInFlight = isInstallingSpeechModel
+        var status = await model.status()
+        try Task.checkCancellation()
+        // If our install ended during the lookup, the first snapshot may still say downloading.
+        if installWasInFlight && !isInstallingSpeechModel && status != .installed {
+            status = await model.status()
+            try Task.checkCancellation()
+        }
+        switch status {
+        case .installed: break
+        case .supported, .downloading:
+            // A fresh tap can rejoin our existing setup, without asking Speech to start it again.
+            if isInstallingSpeechModel {
+                speechModelSetup = .downloading
+            } else if status == .downloading {
+                throw Blocker.speechModelDownloading
+            }
+            missingSpeechModel = model
+            throw Blocker.missingSpeechModel
+        case .unsupported: throw Blocker.unknown
         @unknown default: throw Blocker.unknown
         }
-        guard SpeechTranscriber.isAvailable,
-              let locale = await SpeechTranscriber.supportedLocale(equivalentTo: Locale(identifier: "en-US")) else {
-            throw Blocker.unknown
-        }
-
-        try Task.checkCancellation()
-        let answer = LocalAnswer(locale: locale)
+        let answer = try model.makeAnswer()
         self.answer = answer
         let format = try await answer.prepare()
         try Task.checkCancellation()
@@ -203,31 +251,95 @@ private final class SpokenQuestion: NSObject, AVSpeechSynthesizerDelegate {
     }
 }
 
+// Asset management only needs the module configuration, never an audio engine or answer.
 @MainActor
-private final class LocalAnswer {
-    private let transcriber: SpeechTranscriber
-    private let detector = SpeechDetector(detectionOptions: .init(sensitivityLevel: .medium), reportResults: true)
-    private let engine = AVAudioEngine()
-    private lazy var analyzer = SpeechAnalyzer(modules: modules)
-    private var modules: [any SpeechModule] { [transcriber, detector] }
-    private let input = AsyncThrowingStream<AnalyzerInput, Error>.makeStream()
-    private var hasInputTap = false
-    private var configurationObserver: (any NSObjectProtocol)?
+private struct SpeechModel {
+    let status: () async -> AssetInventory.Status
+    let install: () async throws -> Void
+    let makeAnswer: () throws -> LocalAnswer
+
+    static func resolve() async throws -> Self {
+        #if DEBUG && targetEnvironment(simulator)
+        if let simulatorFixture { return simulatorFixture }
+        #endif
+        switch SystemLanguageModel.default.availability {
+        case .available: break
+        case .unavailable(.deviceNotEligible): throw ChildExchange.Blocker.appleIntelligenceUnsupported
+        case .unavailable: throw ChildExchange.Blocker.appleIntelligenceUnavailable
+        @unknown default: throw ChildExchange.Blocker.unknown
+        }
+        guard SpeechTranscriber.isAvailable,
+              let locale = await SpeechTranscriber.supportedLocale(equivalentTo: Locale(identifier: "en-US")) else {
+            throw ChildExchange.Blocker.unknown
+        }
+        let modules = SpeechModules(locale: locale)
+        return Self(
+            status: { await AssetInventory.status(forModules: modules.all) },
+            install: {
+                // A nil request means the assets are already installed.
+                if let request = try await AssetInventory.assetInstallationRequest(supporting: modules.all) {
+                    try await request.downloadAndInstall()
+                }
+            },
+            makeAnswer: { LocalAnswer(modules: modules) }
+        )
+    }
+
+    #if DEBUG && targetEnvironment(simulator)
+    private enum SimulatedDownloadError: Error { case offline }
+
+    private static let simulatorFixture: Self? = {
+        var status: AssetInventory.Status = .supported
+        var failNextDownload = false
+        switch ProcessInfo.processInfo.environment["PAUSE_UI_TEST_SPEECH_ASSETS"] {
+        case "download": break
+        case "retry": failNextDownload = true
+        case "unsupported": status = .unsupported
+        default: return nil
+        }
+        return Self(
+            status: { status },
+            install: {
+                status = .downloading
+                if failNextDownload {
+                    failNextDownload = false
+                    status = .supported
+                    throw SimulatedDownloadError.offline
+                }
+                try await Task.sleep(for: .seconds(6))
+                status = .installed
+            },
+            makeAnswer: { throw ChildExchange.Blocker.unknown }
+        )
+    }()
+    #endif
+}
+
+private struct SpeechModules {
+    let transcriber: SpeechTranscriber
+    let detector = SpeechDetector(detectionOptions: .init(sensitivityLevel: .medium), reportResults: true)
+    var all: [any SpeechModule] { [transcriber, detector] }
 
     init(locale: Locale) {
         transcriber = SpeechTranscriber(locale: locale, preset: .transcription)
     }
+}
+
+@MainActor
+private final class LocalAnswer {
+    private let modules: SpeechModules
+    private let engine = AVAudioEngine()
+    private lazy var analyzer = SpeechAnalyzer(modules: modules.all)
+    private let input = AsyncThrowingStream<AnalyzerInput, Error>.makeStream()
+    private var hasInputTap = false
+    private var configurationObserver: (any NSObjectProtocol)?
+
+    init(modules: SpeechModules) {
+        self.modules = modules
+    }
 
     func prepare() async throws -> AVAudioFormat {
-        // Do not download models or start audio capture as part of an exchange.
-        switch await AssetInventory.status(forModules: modules) {
-        case .installed: break
-        case .supported: throw ChildExchange.Blocker.missingSpeechModel
-        case .downloading: throw ChildExchange.Blocker.speechModelDownloading
-        case .unsupported: throw ChildExchange.Blocker.unknown
-        @unknown default: throw ChildExchange.Blocker.unknown
-        }
-        guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: modules) else {
+        guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: modules.all) else {
             throw ChildExchange.Blocker.unknown
         }
         try await analyzer.prepareToAnalyze(in: format)
@@ -315,14 +427,14 @@ private final class LocalAnswer {
     }
 
     private func reportSpeech(_ onSpeech: @MainActor (Bool) -> Void) async throws {
-        for try await result in detector.results {
+        for try await result in modules.detector.results {
             onSpeech(result.speechDetected)
         }
     }
 
     private func consumeTranscript() async throws {
         // Finalize recognition, but discard the text in this slice.
-        for try await _ in transcriber.results {}
+        for try await _ in modules.transcriber.results {}
     }
 
     private enum InputError: Error { case format }
