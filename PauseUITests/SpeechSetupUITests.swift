@@ -6,7 +6,7 @@ final class SpeechSetupUITests: XCTestCase {
         let app = try launch(scenario: "download")
         let ask = app.buttons["Ask aloud"]
         let download = app.buttons["Download speech model"]
-        let back = app.buttons["Back to check-in"]
+        let back = app.navigationBars.buttons["Check-in"]
 
         XCTAssertTrue(ask.exists)
         XCTAssertFalse(download.exists)
@@ -16,9 +16,9 @@ final class SpeechSetupUITests: XCTestCase {
         XCTAssertTrue(download.isEnabled)
         download.tap()
 
-        XCTAssertTrue(app.staticTexts["Downloading US English speech-to-text model…"].exists)
+        assertDownloadInProgress(in: app)
         XCTAssertFalse(download.exists)
-        XCTAssertTrue(back.isEnabled)
+        XCTAssertTrue(back.isHittable)
         XCTAssertTrue(app.staticTexts["Speech model ready."].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["General suggestion"].exists)
         XCTAssertFalse(app.staticTexts["Listening…"].exists)
@@ -40,28 +40,28 @@ final class SpeechSetupUITests: XCTestCase {
         let retry = app.buttons["Retry download"]
         XCTAssertTrue(retry.waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Couldn’t download the speech model. Check your connection and try again."].exists)
-        XCTAssertTrue(app.buttons["Back to check-in"].isEnabled)
+        XCTAssertTrue(app.navigationBars.buttons["Check-in"].isHittable)
         retry.tap()
 
+        assertDownloadInProgress(in: app)
         XCTAssertFalse(retry.exists)
-        XCTAssertTrue(app.staticTexts["Downloading US English speech-to-text model…"].exists)
         XCTAssertTrue(app.staticTexts["Speech model ready."].waitForExistence(timeout: 10))
     }
 
     func testBackToCheckInDuringDownloadStaysOnCheckIn() throws {
         let app = try launch(scenario: "download")
         startDownload(in: app)
-        app.buttons["Back to check-in"].tap()
+        app.navigationBars.buttons["Check-in"].tap()
         assertStaysOnCheckIn(in: app)
     }
 
     func testAskingAgainDuringDownloadShowsTheExistingDownloadThroughCompletion() throws {
         let app = try launch(scenario: "download")
         startDownload(in: app)
-        app.buttons["Back to check-in"].tap()
+        app.navigationBars.buttons["Check-in"].tap()
         app.buttons["Ask aloud"].tap()
 
-        XCTAssertTrue(app.staticTexts["Downloading US English speech-to-text model…"].exists)
+        assertDownloadInProgress(in: app)
         XCTAssertFalse(app.buttons["Download speech model"].exists)
         XCTAssertTrue(app.staticTexts["Speech model ready."].waitForExistence(timeout: 10))
     }
@@ -79,7 +79,7 @@ final class SpeechSetupUITests: XCTestCase {
         app.buttons["Ask aloud"].tap()
         XCTAssertTrue(app.staticTexts["General suggestion"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["Download speech model"].exists)
-        XCTAssertTrue(app.buttons["Back to check-in"].isEnabled)
+        XCTAssertTrue(app.navigationBars.buttons["Check-in"].isHittable)
     }
 
     private func startDownload(in app: XCUIApplication) {
@@ -87,7 +87,12 @@ final class SpeechSetupUITests: XCTestCase {
         let download = app.buttons["Download speech model"]
         XCTAssertTrue(download.waitForExistence(timeout: 5))
         download.tap()
-        XCTAssertTrue(app.staticTexts["Downloading US English speech-to-text model…"].exists)
+        assertDownloadInProgress(in: app)
+    }
+
+    private func assertDownloadInProgress(in app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
+        let progress = app.staticTexts["Downloading US English speech-to-text model…"]
+        XCTAssertTrue(progress.waitForExistence(timeout: 3), app.debugDescription, file: file, line: line)
     }
 
     private func assertStaysOnCheckIn(in app: XCUIApplication) {

@@ -12,9 +12,44 @@ final class ChildReplyUITests: XCTestCase {
         app.buttons["Quick reset"].tap()
         XCTAssertTrue(app.staticTexts["Let one breath out before you answer."].exists)
         XCTAssertTrue(app.buttons["I’ve asked three times"].exists)
-        XCTAssertFalse(app.buttons["Ask aloud"].exists)
-        app.buttons["Back to check-in"].tap()
+        let resetBar = app.navigationBars["Quick reset"]
+        resetBar.buttons["Check-in"].tap()
+        XCTAssertTrue(resetBar.waitForNonExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Ask aloud"].isHittable)
+    }
+
+    func testSwipeBackFromQuickResetOpensFreshNextTime() throws {
+        let app = try launch(scenario: "reply")
+        let quickReset = app.buttons["Quick reset"]
+        let opening = app.staticTexts["Let one breath out before you answer."]
+        let situation = app.buttons["We’re running late"]
+        quickReset.tap()
+        situation.tap()
+        XCTAssertFalse(opening.exists)
+
+        let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.01, dy: 0.5))
+        let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5))
+        start.press(forDuration: 0.05, thenDragTo: end)
+
+        XCTAssertTrue(quickReset.wait(for: \.isHittable, toEqual: true, timeout: 5))
+        quickReset.tap()
+        XCTAssertTrue(opening.exists)
+        XCTAssertFalse(situation.isSelected)
+    }
+
+    func testBackFromListeningDiscardsTheExchange() throws {
+        let app = try launch(scenario: "reply")
+        let done = startListening(in: app)
+        app.navigationBars.buttons["Check-in"].tap()
+
         XCTAssertTrue(app.buttons["Ask aloud"].exists)
+        XCTAssertFalse(done.exists)
+        XCTAssertFalse(app.staticTexts["Finding replies…"].exists)
+        XCTAssertFalse(app.staticTexts["You can say"].exists)
+        XCTAssertTrue(startListening(in: app).exists)
+        app.buttons["Cancel"].tap()
+        XCTAssertTrue(app.buttons["Ask aloud"].exists)
+        XCTAssertFalse(done.exists)
     }
 
     func testDoneShowsThreeReplyOptionsUntilBackToCheckIn() throws {
@@ -32,7 +67,7 @@ final class ChildReplyUITests: XCTestCase {
         XCTAssertTrue(invitation.exists)
         XCTAssertFalse(app.staticTexts["Listening…"].exists)
         XCTAssertFalse(done.exists)
-        app.buttons["Back to check-in"].tap()
+        app.navigationBars.buttons["Check-in"].tap()
         XCTAssertTrue(app.buttons["Ask aloud"].exists)
         XCTAssertFalse(reflection.exists)
         XCTAssertFalse(support.exists)
@@ -80,7 +115,7 @@ final class ChildReplyUITests: XCTestCase {
         let ask = app.buttons["Ask aloud"]
         XCTAssertTrue(ask.waitForExistence(timeout: 5))
         // Wait longer than the simulated model, which returns even after cancellation.
-        XCTAssertFalse(app.buttons["Back to check-in"].waitForExistence(timeout: 9))
+        XCTAssertFalse(app.navigationBars.buttons["Check-in"].waitForExistence(timeout: 9))
         XCTAssertTrue(ask.exists)
     }
 
