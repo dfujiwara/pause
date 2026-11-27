@@ -12,6 +12,10 @@ struct PauseApp: App {
 }
 
 private struct PauseScreen: View {
+    private enum Destination: Hashable {
+        case quickReset, exchange
+    }
+
     @Environment(\.scenePhase) private var scenePhase
     @ScaledMetric(relativeTo: .largeTitle) private var cueSize: CGFloat = 36
     @State private var situation: Situation?
@@ -22,24 +26,31 @@ private struct PauseScreen: View {
     @State private var showsReset = false
     @State private var childExchange = ChildExchange()
 
+    private var destination: Destination? {
+        if showsReset { return .quickReset }
+        return childExchange.phase == .reset ? nil : .exchange
+    }
+
     var body: some View {
-        Group {
-            switch childExchange.phase {
-            case .reply(let reply) where scenePhase == .active:
-                exchangeResult(title: "You can say", lines: reply.lines) {}
-            case .reset where showsReset: resetContent
-            case .reset, .reply: checkInContent
-            case .suggestion(let blocker): generalSuggestion(blocker: blocker)
-            case .preparing: childExchangeStatus(title: "Getting ready…")
-            case .asking: childExchangeStatus(title: ChildExchange.questionText)
-            case .listening: childExchangeStatus(title: "Listening…")
-            case .finishing: childExchangeStatus(title: "Finishing…")
-            case .generating: childExchangeStatus(title: "Finding replies…")
-            }
+        NavigationStack {
+            ScreenContent { checkInContent }
+                .navigationTitle("Check-in")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar(.hidden, for: .navigationBar)
+                .navigationDestination(item: Binding(get: { destination }, set: { newDestination in
+                    // A completed system pop (button or gesture) dismisses the whole flow.
+                    if newDestination == nil { returnToCheckIn() }
+                })) { destination in
+                    switch destination {
+                    case .quickReset:
+                        ScreenContent { resetContent }
+                            .navigationTitle("Quick reset")
+                    case .exchange:
+                        ScreenContent { exchangeContent }
+                            .navigationTitle("Ask aloud")
+                    }
+                }
         }
-        .frame(maxWidth: 460)
-        .padding(.horizontal, 24)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onChange(of: scenePhase, initial: true) { _, phase in
             switch phase {
             case .active:
@@ -48,14 +59,9 @@ private struct PauseScreen: View {
             case .inactive:
                 stopOpeningSpeech()
                 childExchange.sceneDidBecomeInactive()
-            case .background:
-                stopOpeningSpeech()
+            default: // Background or a future scene phase.
                 childExchange.sceneDidBecomeInactive()
-                childExchange.cancel()
-                closeReset()
-            @unknown default:
-                stopOpeningSpeech()
-                childExchange.cancel()
+                returnToCheckIn()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { notification in
@@ -68,6 +74,21 @@ private struct PauseScreen: View {
                 stopOpeningSpeech()
                 childExchange.interruptAudio()
             }
+        }
+    }
+
+    @ViewBuilder
+    private var exchangeContent: some View {
+        switch childExchange.phase {
+        case .reply(let reply) where scenePhase == .active:
+            exchangeResult(title: "You can say", lines: reply.lines) {}
+        case .reset, .reply: EmptyView()
+        case .suggestion(let blocker): generalSuggestion(blocker: blocker)
+        case .preparing: childExchangeStatus(title: "Getting ready…")
+        case .asking: childExchangeStatus(title: ChildExchange.questionText)
+        case .listening: childExchangeStatus(title: "Listening…")
+        case .finishing: childExchangeStatus(title: "Finishing…")
+        case .generating: childExchangeStatus(title: "Finding replies…")
         }
     }
 
@@ -112,7 +133,8 @@ private struct PauseScreen: View {
         .buttonStyle(.bordered)
     }
 
-    private func closeReset() {
+    private func returnToCheckIn() {
+        childExchange.cancel()
         stopOpeningSpeech()
         showsReset = false
         situation = nil
@@ -161,7 +183,7 @@ private struct PauseScreen: View {
                     Button("Done", action: childExchange.finishListening)
                         .buttonStyle(.borderedProminent)
                 }
-                Button("Cancel", action: childExchange.cancel)
+                Button("Cancel", action: returnToCheckIn)
                     .buttonStyle(.bordered)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -205,8 +227,6 @@ private struct PauseScreen: View {
                         .privacySensitive()
                 }
                 details()
-                Button("Back to check-in", action: childExchange.cancel)
-                    .buttonStyle(.bordered)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 32)
@@ -276,9 +296,6 @@ private struct PauseScreen: View {
                     .font(.title3)
             }
             .accessibilityElement(children: .combine)
-
-            Button("Back to check-in", action: closeReset)
-                .buttonStyle(.bordered)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -365,6 +382,17 @@ private struct PauseScreen: View {
         cue = newCue
         scrollPosition.scrollTo(edge: .top)
         AccessibilityNotification.Announcement("\(newCue.inward) You can say: \(newCue.outLoud)").post()
+    }
+}
+
+private struct ScreenContent<Content: View>: View {
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        content()
+            .frame(maxWidth: 460)
+            .padding(.horizontal, 24)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
